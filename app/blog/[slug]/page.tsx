@@ -3,7 +3,7 @@ import BlogPostClient from './BlogPostClient'
 import { BLOG_POSTS } from '@/lib/constants'
 
 type Props = {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
@@ -11,13 +11,15 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const post = BLOG_POSTS.find((p) => p.slug === params.slug)
+  const { slug } = await params
+  const post = BLOG_POSTS.find((p) => p.slug === slug)
   return {
     title: post?.title || 'Blog Post',
     description: post?.excerpt || 'A blog post from Radheya.',
   }
 }
 
-export default function BlogPostPage({ params }: Props) {
-  return <BlogPostClient slug={params.slug} />
+export default async function BlogPostPage({ params }: Props) {
+  const { slug } = await params
+  return <BlogPostClient slug={slug} />
 }
