@@ -31,8 +31,8 @@ export const NAV_LINKS = [
 ] as const
 
 export const STATS = [
-  { value: 2, suffix: '+', label: 'Products Live' },
-  { value: 50, suffix: '+', label: 'Clients Served' },
+  { value: 1, suffix: '+', label: 'Products Live' },
+  { value: 7, suffix: '+', label: 'Builders & Counting' },
   { value: 100, suffix: '%', label: 'Purpose Driven' },
 ] as const
 
