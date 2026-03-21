@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Radheya Logo Preview</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0A0A0A; color: #F5F0E8; font-family: 'Space Grotesk', sans-serif; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 60px 20px; }
+  h2 { color: #888; font-size: 12px; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 40px; }
+  .variant { margin: 40px 0; text-align: center; }
+  .variant-label { color: #888; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+  .row { display: flex; align-items: center; justify-content: center; gap: 30px; flex-wrap: wrap; }
+  .bg-dark { background: #0A0A0A; padding: 30px 50px; border: 1px solid #1A1A2E; border-radius: 12px; }
+  .bg-card { background: #111118; padding: 30px 50px; border: 1px solid #1A1A2E; border-radius: 12px; }
+  .bg-light { background: #F5F0E8; padding: 30px 50px; border-radius: 12px; }
+  .divider { width: 100%; max-width: 600px; height: 1px; background: #1A1A2E; margin: 30px 0; }
+  .size-label { color: #555; font-size: 10px; letter-spacing: 2px; margin-top: 8px; text-align: center; }
+</style>
+</head>
+<body>
+<h2>Radheya Logo System</h2>
+
+<!-- VARIANT A: Full Logo (Icon + Wordmark) -->
+<div class="variant">
+  <div class="variant-label">Variant A — Full Logo (Navbar / Header)</div>
+  <div class="row">
+    <div>
+      <div class="bg-dark">
+        <svg width="220" height="40" viewBox="0 0 220 40">
+          <!-- Sun Icon -->
+          <g transform="translate(20, 20)">
+            <circle cx="0" cy="0" r="7" fill="#C9A84C" opacity="0.9"/>
+            <circle cx="0" cy="0" r="7" fill="none" stroke="#C9A84C" stroke-width="0.4" opacity="0.6"/>
+            <!-- Rays -->
+            <g stroke="#C9A84C" stroke-width="1.3" stroke-linecap="round" opacity="0.8">
+              <line x1="0" y1="-10" x2="0" y2="-14"/>
+              <line x1="0" y1="10" x2="0" y2="14"/>
+              <line x1="-10" y1="0" x2="-14" y2="0"/>
+              <line x1="10" y1="0" x2="14" y2="0"/>
+              <line x1="-7" y1="-7" x2="-10" y2="-10"/>
+              <line x1="7" y1="7" x2="10" y2="10"/>
+              <line x1="7" y1="-7" x2="10" y2="-10"/>
+              <line x1="-7" y1="7" x2="-10" y2="10"/>
+            </g>
+            <!-- Subtle secondary rays -->
+            <g stroke="#C9A84C" stroke-width="0.6" stroke-linecap="round" opacity="0.4">
+              <line x1="-3.8" y1="-9.5" x2="-5.5" y2="-13"/>
+              <line x1="3.8" y1="-9.5" x2="5.5" y2="-13"/>
+              <line x1="-3.8" y1="9.5" x2="-5.5" y2="13"/>
+              <line x1="3.8" y1="9.5" x2="5.5" y2="13"/>
+              <line x1="-9.5" y1="-3.8" x2="-13" y2="-5.5"/>
+              <line x1="-9.5" y1="3.8" x2="-13" y2="5.5"/>
+              <line x1="9.5" y1="-3.8" x2="13" y2="-5.5"/>
+              <line x1="9.5" y1="3.8" x2="13" y2="5.5"/>
+            </g>
+          </g>
+          <!-- Wordmark -->
+          <text x="46" y="27" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="20" letter-spacing="4" fill="#C9A84C">RADHEYA</text>
+        </svg>
+      </div>
+      <div class="size-label">On dark background</div>
+    </div>
+    <div>
+      <div class="bg-light">
+        <svg width="220" height="40" viewBox="0 0 220 40">
+          <g transform="translate(20, 20)">
+            <circle cx="0" cy="0" r="7" fill="#0A0A0A" opacity="0.9"/>
+            <g stroke="#0A0A0A" stroke-width="1.3" stroke-linecap="round" opacity="0.8">
+              <line x1="0" y1="-10" x2="0" y2="-14"/>
+              <line x1="0" y1="10" x2="0" y2="14"/>
+              <line x1="-10" y1="0" x2="-14" y2="0"/>
+              <line x1="10" y1="0" x2="14" y2="0"/>
+              <line x1="-7" y1="-7" x2="-10" y2="-10"/>
+              <line x1="7" y1="7" x2="10" y2="10"/>
+              <line x1="7" y1="-7" x2="10" y2="-10"/>
+              <line x1="-7" y1="7" x2="-10" y2="10"/>
+            </g>
+            <g stroke="#0A0A0A" stroke-width="0.6" stroke-linecap="round" opacity="0.4">
+              <line x1="-3.8" y1="-9.5" x2="-5.5" y2="-13"/>
+              <line x1="3.8" y1="-9.5" x2="5.5" y2="-13"/>
+              <line x1="-3.8" y1="9.5" x2="-5.5" y2="13"/>
+              <line x1="3.8" y1="9.5" x2="5.5" y2="13"/>
+              <line x1="-9.5" y1="-3.8" x2="-13" y2="-5.5"/>
+              <line x1="-9.5" y1="3.8" x2="-13" y2="5.5"/>
+              <line x1="9.5" y1="-3.8" x2="13" y2="-5.5"/>
+              <line x1="9.5" y1="3.8" x2="13" y2="5.5"/>
+            </g>
+          </g>
+          <text x="46" y="27" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="20" letter-spacing="4" fill="#0A0A0A">RADHEYA</text>
+        </svg>
+      </div>
+      <div class="size-label">On light background</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- VARIANT B: Icon Only (Favicon / App Icon) -->
+<div class="variant">
+  <div class="variant-label">Variant B — Icon Only (Favicon / App Icon / Watermark)</div>
+  <div class="row">
+    <div>
+      <div class="bg-dark" style="padding: 30px;">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <rect width="64" height="64" rx="14" fill="#111118" stroke="#C9A84C" stroke-width="0.5" opacity="1"/>
+          <g transform="translate(32, 32)">
+            <circle cx="0" cy="0" r="10" fill="#C9A84C" opacity="0.9"/>
+            <circle cx="0" cy="0" r="10" fill="none" stroke="#C9A84C" stroke-width="0.5" opacity="0.5"/>
+            <g stroke="#C9A84C" stroke-width="1.8" stroke-linecap="round" opacity="0.85">
+              <line x1="0" y1="-14" x2="0" y2="-20"/>
+              <line x1="0" y1="14" x2="0" y2="20"/>
+              <line x1="-14" y1="0" x2="-20" y2="0"/>
+              <line x1="14" y1="0" x2="20" y2="0"/>
+              <line x1="-10" y1="-10" x2="-14.5" y2="-14.5"/>
+              <line x1="10" y1="10" x2="14.5" y2="14.5"/>
+              <line x1="10" y1="-10" x2="14.5" y2="-14.5"/>
+              <line x1="-10" y1="10" x2="-14.5" y2="14.5"/>
+            </g>
+            <g stroke="#C9A84C" stroke-width="0.8" stroke-linecap="round" opacity="0.4">
+              <line x1="-5.4" y1="-13.5" x2="-7.8" y2="-19"/>
+              <line x1="5.4" y1="-13.5" x2="7.8" y2="-19"/>
+              <line x1="-5.4" y1="13.5" x2="-7.8" y2="19"/>
+              <line x1="5.4" y1="13.5" x2="7.8" y2="19"/>
+              <line x1="-13.5" y1="-5.4" x2="-19" y2="-7.8"/>
+              <line x1="-13.5" y1="5.4" x2="-19" y2="7.8"/>
+              <line x1="13.5" y1="-5.4" x2="19" y2="-7.8"/>
+              <line x1="13.5" y1="5.4" x2="19" y2="7.8"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="size-label">64px — App icon</div>
+    </div>
+    <div>
+      <div class="bg-dark" style="padding: 30px;">
+        <svg width="32" height="32" viewBox="0 0 32 32">
+          <rect width="32" height="32" rx="6" fill="#111118"/>
+          <g transform="translate(16, 16)">
+            <circle cx="0" cy="0" r="5" fill="#C9A84C" opacity="0.9"/>
+            <g stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round" opacity="0.85">
+              <line x1="0" y1="-7.5" x2="0" y2="-11"/>
+              <line x1="0" y1="7.5" x2="0" y2="11"/>
+              <line x1="-7.5" y1="0" x2="-11" y2="0"/>
+              <line x1="7.5" y1="0" x2="11" y2="0"/>
+              <line x1="-5.3" y1="-5.3" x2="-7.8" y2="-7.8"/>
+              <line x1="5.3" y1="5.3" x2="7.8" y2="7.8"/>
+              <line x1="5.3" y1="-5.3" x2="7.8" y2="-7.8"/>
+              <line x1="-5.3" y1="5.3" x2="-7.8" y2="7.8"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="size-label">32px — Favicon</div>
+    </div>
+    <div>
+      <div class="bg-dark" style="padding: 30px;">
+        <svg width="16" height="16" viewBox="0 0 16 16">
+          <rect width="16" height="16" rx="3" fill="#111118"/>
+          <circle cx="8" cy="8" r="3" fill="#C9A84C" opacity="0.9"/>
+          <g stroke="#C9A84C" stroke-width="1" stroke-linecap="round" opacity="0.8">
+            <line x1="8" y1="1.5" x2="8" y2="3.5"/>
+            <line x1="8" y1="12.5" x2="8" y2="14.5"/>
+            <line x1="1.5" y1="8" x2="3.5" y2="8"/>
+            <line x1="12.5" y1="8" x2="14.5" y2="8"/>
+          </g>
+        </svg>
+      </div>
+      <div class="size-label">16px — Tiny</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- VARIANT C: Sizes in Navbar -->
+<div class="variant">
+  <div class="variant-label">Variant C — As it would look in the Navbar</div>
+  <div class="row">
+    <div>
+      <div class="bg-dark" style="padding: 16px 30px; display: flex; align-items: center; gap: 40px; min-width: 600px;">
+        <!-- Logo -->
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <svg width="30" height="30" viewBox="0 0 30 30">
+            <g transform="translate(15, 15)">
+              <circle cx="0" cy="0" r="5.5" fill="#C9A84C" opacity="0.9"/>
+              <g stroke="#C9A84C" stroke-width="1.1" stroke-linecap="round" opacity="0.8">
+                <line x1="0" y1="-8" x2="0" y2="-11.5"/>
+                <line x1="0" y1="8" x2="0" y2="11.5"/>
+                <line x1="-8" y1="0" x2="-11.5" y2="0"/>
+                <line x1="8" y1="0" x2="11.5" y2="0"/>
+                <line x1="-5.7" y1="-5.7" x2="-8.1" y2="-8.1"/>
+                <line x1="5.7" y1="5.7" x2="8.1" y2="8.1"/>
+                <line x1="5.7" y1="-5.7" x2="8.1" y2="-8.1"/>
+                <line x1="-5.7" y1="5.7" x2="-8.1" y2="8.1"/>
+              </g>
+            </g>
+          </svg>
+          <span style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: 3px; color: #C9A84C;">RADHEYA</span>
+        </div>
+        <!-- Nav links -->
+        <div style="display: flex; gap: 24px; margin-left: auto;">
+          <span style="font-family: sans-serif; font-size: 11px; letter-spacing: 2px; color: #888; text-transform: uppercase;">Products</span>
+          <span style="font-family: sans-serif; font-size: 11px; letter-spacing: 2px; color: #888; text-transform: uppercase;">Services</span>
+          <span style="font-family: sans-serif; font-size: 11px; letter-spacing: 2px; color: #888; text-transform: uppercase;">About</span>
+          <span style="font-family: sans-serif; font-size: 11px; letter-spacing: 2px; color: #F5F0E8; text-transform: uppercase; border-bottom: 1px solid #C9A84C; padding-bottom: 2px;">Blog</span>
+        </div>
+        <div style="border: 1px solid #C9A84C; padding: 6px 16px; border-radius: 4px; font-family: sans-serif; font-size: 11px; letter-spacing: 2px; color: #C9A84C; text-transform: uppercase;">Contact Us</div>
+      </div>
+      <div class="size-label">Navbar mockup with logo</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- Social / OG Image Preview -->
+<div class="variant">
+  <div class="variant-label">Variant D — Social Sharing Card (OG Image)</div>
+  <div class="row">
+    <div>
+      <div style="width: 500px; height: 262px; background: linear-gradient(135deg, #0A0A0A 0%, #111118 50%, #0A0A0A 100%); border-radius: 12px; border: 1px solid #1A1A2E; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 16px; position: relative; overflow: hidden;">
+        <!-- Subtle background glow -->
+        <div style="position: absolute; width: 200px; height: 200px; background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%); top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+        <svg width="50" height="50" viewBox="0 0 50 50" style="position: relative;">
+          <g transform="translate(25, 25)">
+            <circle cx="0" cy="0" r="8" fill="#C9A84C" opacity="0.9"/>
+            <g stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round" opacity="0.8">
+              <line x1="0" y1="-11.5" x2="0" y2="-17"/>
+              <line x1="0" y1="11.5" x2="0" y2="17"/>
+              <line x1="-11.5" y1="0" x2="-17" y2="0"/>
+              <line x1="11.5" y1="0" x2="17" y2="0"/>
+              <line x1="-8.1" y1="-8.1" x2="-12" y2="-12"/>
+              <line x1="8.1" y1="8.1" x2="12" y2="12"/>
+              <line x1="8.1" y1="-8.1" x2="12" y2="-12"/>
+              <line x1="-8.1" y1="8.1" x2="-12" y2="12"/>
+            </g>
+          </g>
+        </svg>
+        <div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 5px; color: #C9A84C; position: relative;">RADHEYA</div>
+        <div style="font-family: sans-serif; font-size: 13px; color: #888; letter-spacing: 2px; position: relative;">Solving Tomorrow, Today.</div>
+      </div>
+      <div class="size-label">How it looks when shared on LinkedIn / Twitter / WhatsApp</div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

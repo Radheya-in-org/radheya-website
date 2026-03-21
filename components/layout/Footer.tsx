@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Mail, Linkedin, Twitter, Github } from 'lucide-react'
 import { COMPANY, SERVICES } from '@/lib/constants'
 import ChariotWheel from '@/components/karna/ChariotWheel'
+import RadheyaLogo from '@/components/ui/RadheyaLogo'
 
 const companyLinks = [
   { label: 'About', href: '/about' },
@@ -33,12 +34,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
         {/* Logo + Tagline */}
         <div className="mb-12">
-          <Link
-            href="/"
-            className="font-heading font-bold text-accent tracking-ui-wider text-lg"
-          >
-            RADHEYA
-          </Link>
+          <RadheyaLogo size="md" />
           <p className="text-muted text-sm mt-2 font-body">{COMPANY.tagline}</p>
         </div>
 

@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import Link from 'next/link'
 import { motion, AnimatePresence, useScroll } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { NAV_LINKS } from '@/lib/constants'
+import RadheyaLogo from '@/components/ui/RadheyaLogo'
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -52,12 +53,7 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo */}
-            <Link
-              href="/"
-              className="font-heading font-bold text-accent tracking-ui-wider text-lg"
-            >
-              RADHEYA
-            </Link>
+            <RadheyaLogo size="md" />
 
             {/* Desktop Nav Links */}
             <div className="hidden lg:flex items-center gap-8">
