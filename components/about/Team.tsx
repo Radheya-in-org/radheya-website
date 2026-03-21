@@ -12,17 +12,9 @@ export default function Team() {
     <div>
       <SectionHeading title="Meet the Team" subtitle="The people behind Radheya" />
 
-      {/* Top row — 4 members centered */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 max-w-4xl mx-auto mt-14">
-        {TEAM.slice(0, 4).map((member, i) => (
+        {TEAM.map((member, i) => (
           <TeamCard key={member.name} member={member} index={i} />
-        ))}
-      </div>
-
-      {/* Bottom row — 3 members centered */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 max-w-3xl mx-auto mt-5">
-        {TEAM.slice(4).map((member, i) => (
-          <TeamCard key={member.name} member={member} index={i + 4} />
         ))}
       </div>
     </div>

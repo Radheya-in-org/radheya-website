@@ -238,6 +238,13 @@ export const TEAM = [
     image: null,
     linkedin: 'https://www.linkedin.com/in/naresh-edagotti-6a71a1233/',
   },
+  {
+    name: 'Rohith Aerva',
+    role: 'DevOps Lead',
+    tagline: 'Keeps the infrastructure alive',
+    image: null,
+    linkedin: 'https://www.linkedin.com/in/rohith-aerva-9980652b5/',
+  },
 ] as const
 
 export const BENEFITS = [
