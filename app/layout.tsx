@@ -28,6 +28,9 @@ const outfit = Outfit({
 })
 
 export const metadata: Metadata = {
+  verification: {
+    google: 'PSQ9_S9jyX8o_BSTBA8MQS9ND_T8k9X8CzeF-hmTdl8',
+  },
   title: {
     default: 'Radheya — Solving Tomorrow, Today',
     template: '%s — Radheya',
