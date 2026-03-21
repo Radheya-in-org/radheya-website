@@ -3,6 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { Linkedin } from 'lucide-react'
 import { TEAM } from '@/lib/constants'
 import SectionHeading from '@/components/ui/SectionHeading'
 
@@ -11,41 +12,86 @@ export default function Team() {
     <div>
       <SectionHeading title="Meet the Team" subtitle="The people behind Radheya" />
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-w-4xl mx-auto mt-14">
-        {TEAM.map((member, i) => (
-          <motion.div
-            key={member.name}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 + i * 0.08 }}
-            className="flex flex-col items-center text-center p-5 rounded-xl border border-subtle/10 bg-dark-card/30 hover:border-accent/20 transition-colors"
-          >
-            {/* Avatar */}
-            <div className="w-20 h-20 rounded-full bg-secondary border-2 border-subtle/30 mb-4 flex items-center justify-center overflow-hidden">
-              {member.image ? (
-                <Image
-                  src={member.image}
-                  alt={member.name}
-                  width={80}
-                  height={80}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="font-heading text-lg font-bold text-accent/60">
-                  {member.name.split(' ').map((n) => n[0]).join('')}
-                </span>
-              )}
-            </div>
+      {/* Top row — 4 members centered */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 max-w-4xl mx-auto mt-14">
+        {TEAM.slice(0, 4).map((member, i) => (
+          <TeamCard key={member.name} member={member} index={i} />
+        ))}
+      </div>
 
-            <h4 className="font-heading text-sm font-semibold text-warm-ivory leading-tight">
-              {member.name}
-            </h4>
-            <p className="font-body text-accent text-xs mt-1">
-              {member.role}
-            </p>
-          </motion.div>
+      {/* Bottom row — 3 members centered */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-5 max-w-3xl mx-auto mt-5">
+        {TEAM.slice(4).map((member, i) => (
+          <TeamCard key={member.name} member={member} index={i + 4} />
         ))}
       </div>
     </div>
+  )
+}
+
+function TeamCard({
+  member,
+  index,
+}: {
+  member: (typeof TEAM)[number]
+  index: number
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: 0.05 + index * 0.07 }}
+      className="group relative flex flex-col items-center text-center p-6 rounded-xl
+                 border border-subtle/15 bg-dark-card/40
+                 hover:border-accent/25 hover:bg-dark-card/70
+                 transition-all duration-300"
+    >
+      {/* Avatar */}
+      <div className="relative w-[72px] h-[72px] rounded-full bg-secondary/80 border-2 border-subtle/20
+                      group-hover:border-accent/30 mb-4 flex items-center justify-center overflow-hidden
+                      transition-all duration-300">
+        {member.image ? (
+          <Image
+            src={member.image}
+            alt={member.name}
+            width={72}
+            height={72}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <span className="font-heading text-base font-bold text-accent/50 group-hover:text-accent/70 transition-colors">
+            {member.name.split(' ').map((n) => n[0]).join('')}
+          </span>
+        )}
+      </div>
+
+      {/* Name */}
+      <h4 className="font-heading text-sm font-semibold text-warm-ivory leading-tight">
+        {member.name}
+      </h4>
+
+      {/* Role */}
+      <p className="font-ui text-[11px] uppercase tracking-[2px] text-accent mt-1.5">
+        {member.role}
+      </p>
+
+      {/* Tagline */}
+      <p className="font-body text-xs text-muted mt-2 leading-relaxed italic">
+        {member.tagline}
+      </p>
+
+      {/* LinkedIn */}
+      <a
+        href={member.linkedin}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-3 p-1.5 rounded-full text-muted/50 hover:text-accent hover:bg-accent/10
+                   transition-all duration-200"
+        aria-label={`${member.name} on LinkedIn`}
+      >
+        <Linkedin size={15} />
+      </a>
+    </motion.div>
   )
 }

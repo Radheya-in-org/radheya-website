@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import SectionHeading from '@/components/ui/SectionHeading'
 import ServiceDetail from '@/components/services/ServiceDetail'
 import ProcessTimeline from '@/components/services/ProcessTimeline'
+import TechStack from '@/components/services/TechStack'
 import Button from '@/components/ui/Button'
 import { SERVICES } from '@/lib/constants'
 import { fadeInUp } from '@/lib/animations'
@@ -61,6 +62,19 @@ export default function ServicesPageClient() {
               index={index}
             />
           ))}
+        </div>
+      </section>
+
+      {/* Tech Stack */}
+      <section className="py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <SectionHeading
+            title="Our Tech Stack"
+            subtitle="We pick the right tool for the job — not the trendiest one."
+          />
+          <div className="mt-14">
+            <TechStack />
+          </div>
         </div>
       </section>
 

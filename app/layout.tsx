@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: 'Radheya — Solving Tomorrow, Today',
     description:
       'We build products that solve real-world problems and craft custom software for businesses that demand excellence.',
-    url: 'https://radheya.dev',
+    url: 'https://radheya.in',
     siteName: 'Radheya',
     locale: 'en_US',
     type: 'website',
