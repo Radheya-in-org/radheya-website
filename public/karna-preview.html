@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surya Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0A0A0A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  .scene {
+    position: relative;
+    width: 420px;
+    height: 460px;
+  }
+  canvas { display: block; }
+  .label {
+    position: absolute;
+    bottom: -8px;
+    left: 0; right: 0;
+    text-align: center;
+    color: rgba(201,168,76,0.45);
+    font-family: system-ui, sans-serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="scene">
+  <canvas id="c" width="420" height="460"></canvas>
+  <div class="label">Radheya · రాధేయ</div>
+</div>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const W = 420, H = 460;
+let t = 0;
+
+// Sparks
+const sparks = [];
+function addSpark(x, y, vx, vy, life) {
+  sparks.push({ x, y, vx, vy, life, max: life, size: 0.5 + Math.random() * 2 });
+}
+
+function gold(a) { return `rgba(201,168,76,${a})`; }
+function warmGold(a) { return `rgba(230,195,70,${a})`; }
+function hotGold(a) { return `rgba(255,220,100,${a})`; }
+
+function drawGlow(x, y, r, alpha) {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, gold(alpha));
+  g.addColorStop(0.4, gold(alpha * 0.4));
+  g.addColorStop(1, 'rgba(201,168,76,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// ============ SURYA SUN ============
+const CX = W / 2;
+const CY = 235;
+const SUN_R = 58;
+
+// Generate flame ray paths — organic, flowing, like the reference image
+// Each ray is a set of control points for a flowing flame shape
+function generateFlameRays() {
+  const rays = [];
+  const count = 23; // more rays for full coverage
+  for (let i = 0; i < count; i++) {
+    // Full circle except a small gap at the bottom (~300° spread, leaving ~60° gap at bottom)
+    const gapSize = 0.17; // fraction of circle to skip at bottom (roughly 60°)
+    const startAngle = Math.PI / 2 + gapSize * Math.PI; // just past bottom-right
+    const endAngle = Math.PI / 2 - gapSize * Math.PI + Math.PI * 2; // just before bottom-left (full wrap)
+    const baseAngle = startAngle + (endAngle - startAngle) * (i / (count - 1));
+    // Uniform ray length with slight random variation
+    const baseLen = 75 + (Math.random() - 0.5) * 15;
+    // Each flame ray has a slight curve/wave
+    const curveDir = (Math.random() - 0.5) * 0.3;
+    const width = 7 + Math.random() * 4;
+    rays.push({
+      angle: baseAngle,
+      length: baseLen,
+      curve: curveDir,
+      width: width,
+      phase: Math.random() * Math.PI * 2,
+      speed: 0.8 + Math.random() * 0.6,
+      flickerSpeed: 2 + Math.random() * 2
+    });
+  }
+  return rays;
+}
+
+const flameRays = generateFlameRays();
+
+function drawFlameRay(ray) {
+  const { angle, length, curve, width, phase, speed, flickerSpeed } = ray;
+
+  // Animate: flame flickers in length and sways
+  const flicker = 0.85 + 0.15 * Math.sin(t * flickerSpeed + phase);
+  const sway = Math.sin(t * speed + phase) * 0.06;
+  const currentAngle = angle + sway;
+  const currentLen = length * flicker;
+
+  // Base point on sun circle
+  const bx = CX + (SUN_R - 2) * Math.cos(currentAngle);
+  const by = CY + (SUN_R - 2) * Math.sin(currentAngle);
+
+  // Tip point
+  const tx = CX + (SUN_R + currentLen) * Math.cos(currentAngle + curve * 0.3);
+  const ty = CY + (SUN_R + currentLen) * Math.sin(currentAngle + curve * 0.3);
+
+  // Midpoint with curve offset
+  const midDist = SUN_R + currentLen * 0.5;
+  const perpAngle = currentAngle + Math.PI / 2;
+  const curveOffset = curve * currentLen * 0.3 * Math.sin(t * speed * 0.5 + phase);
+  const mx = CX + midDist * Math.cos(currentAngle) + curveOffset * Math.cos(perpAngle);
+  const my = CY + midDist * Math.sin(currentAngle) + curveOffset * Math.sin(perpAngle);
+
+  // Width perpendicular vectors
+  const baseWidth = width;
+  const tipWidth = width * 0.08; // taper to near-point
+  const midWidth = width * 0.55;
+
+  const perpX = Math.cos(perpAngle);
+  const perpY = Math.sin(perpAngle);
+
+  // Left edge
+  const bl_x = bx + perpX * baseWidth / 2;
+  const bl_y = by + perpY * baseWidth / 2;
+  const ml_x = mx + perpX * midWidth / 2;
+  const ml_y = my + perpY * midWidth / 2;
+  const tl_x = tx + perpX * tipWidth / 2;
+  const tl_y = ty + perpY * tipWidth / 2;
+
+  // Right edge
+  const br_x = bx - perpX * baseWidth / 2;
+  const br_y = by - perpY * baseWidth / 2;
+  const mr_x = mx - perpX * midWidth / 2;
+  const mr_y = my - perpY * midWidth / 2;
+  const tr_x = tx - perpX * tipWidth / 2;
+  const tr_y = ty - perpY * tipWidth / 2;
+
+  // Gradient along the ray
+  const grad = ctx.createLinearGradient(bx, by, tx, ty);
+  grad.addColorStop(0, gold(0.65 * flicker));
+  grad.addColorStop(0.3, warmGold(0.55 * flicker));
+  grad.addColorStop(0.6, gold(0.35 * flicker));
+  grad.addColorStop(1, gold(0.05));
+
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.moveTo(bl_x, bl_y);
+  ctx.quadraticCurveTo(ml_x, ml_y, tl_x, tl_y);
+  // Tip
+  ctx.lineTo(tx, ty);
+  ctx.lineTo(tr_x, tr_y);
+  // Right edge back
+  ctx.quadraticCurveTo(mr_x, mr_y, br_x, br_y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Hot inner core of flame (brighter, narrower)
+  const innerWidth = baseWidth * 0.3;
+  const innerMidW = midWidth * 0.25;
+  const ibl_x = bx + perpX * innerWidth / 2;
+  const ibl_y = by + perpY * innerWidth / 2;
+  const ibr_x = bx - perpX * innerWidth / 2;
+  const ibr_y = by - perpY * innerWidth / 2;
+  const iml_x = mx + perpX * innerMidW / 2;
+  const iml_y = my + perpY * innerMidW / 2;
+  const imr_x = mx - perpX * innerMidW / 2;
+  const imr_y = my - perpY * innerMidW / 2;
+
+  const innerGrad = ctx.createLinearGradient(bx, by, mx, my);
+  innerGrad.addColorStop(0, hotGold(0.4 * flicker));
+  innerGrad.addColorStop(0.5, warmGold(0.2 * flicker));
+  innerGrad.addColorStop(1, 'rgba(255,220,100,0)');
+
+  ctx.fillStyle = innerGrad;
+  ctx.beginPath();
+  ctx.moveTo(ibl_x, ibl_y);
+  ctx.quadraticCurveTo(iml_x, iml_y, mx, my);
+  ctx.lineTo(mx, my);
+  ctx.quadraticCurveTo(imr_x, imr_y, ibr_x, ibr_y);
+  ctx.closePath();
+  ctx.fill();
+
+  // Occasional spark from tip
+  if (Math.random() < 0.02) {
+    addSpark(tx, ty,
+      Math.cos(currentAngle) * (1 + Math.random()) + (Math.random()-0.5),
+      Math.sin(currentAngle) * (1 + Math.random()) + (Math.random()-0.5),
+      30 + Math.random() * 40);
+  }
+}
+
+function drawSunDisc() {
+  const pulse = 0.9 + 0.1 * Math.sin(t * 1.5);
+
+  // Massive outer glow
+  drawGlow(CX, CY, 180, 0.06 * pulse);
+  drawGlow(CX, CY, 120, 0.1 * pulse);
+  drawGlow(CX, CY, 80, 0.15 * pulse);
+
+  // Sun disc — filled with gradient
+  const discGrad = ctx.createRadialGradient(CX - 8, CY - 10, 5, CX, CY, SUN_R);
+  discGrad.addColorStop(0, hotGold(0.7 * pulse));
+  discGrad.addColorStop(0.3, warmGold(0.6 * pulse));
+  discGrad.addColorStop(0.7, gold(0.5 * pulse));
+  discGrad.addColorStop(1, gold(0.35 * pulse));
+
+  ctx.save();
+  ctx.shadowColor = gold(0.5);
+  ctx.shadowBlur = 25;
+  ctx.fillStyle = discGrad;
+  ctx.beginPath();
+  ctx.arc(CX, CY, SUN_R, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+
+  // Sun disc ring
+  ctx.strokeStyle = gold(0.5 * pulse);
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(CX, CY, SUN_R, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Inner ring
+  ctx.strokeStyle = warmGold(0.25 * pulse);
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  ctx.arc(CX, CY, SUN_R * 0.7, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Center bright spot
+  drawGlow(CX - 5, CY - 5, 20, 0.3 * pulse);
+
+  // Texture: subtle radial lines inside disc
+  for (let i = 0; i < 12; i++) {
+    const a = (Math.PI * 2 * i) / 12 + t * 0.1;
+    ctx.strokeStyle = gold(0.08);
+    ctx.lineWidth = 0.5;
+    ctx.beginPath();
+    ctx.moveTo(CX + 10 * Math.cos(a), CY + 10 * Math.sin(a));
+    ctx.lineTo(CX + (SUN_R - 5) * Math.cos(a), CY + (SUN_R - 5) * Math.sin(a));
+    ctx.stroke();
+  }
+}
+
+// ============ HORIZON LINE ============
+function drawHorizon() {
+  // Ground/horizon line beneath the sun
+  const hY = CY + SUN_R + 8;
+
+  // Glow on horizon
+  const hGrad = ctx.createLinearGradient(CX - 100, hY, CX + 100, hY);
+  hGrad.addColorStop(0, 'rgba(201,168,76,0)');
+  hGrad.addColorStop(0.3, gold(0.15));
+  hGrad.addColorStop(0.5, gold(0.25));
+  hGrad.addColorStop(0.7, gold(0.15));
+  hGrad.addColorStop(1, 'rgba(201,168,76,0)');
+
+  ctx.strokeStyle = hGrad;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(CX - 120, hY);
+  ctx.lineTo(CX + 120, hY);
+  ctx.stroke();
+
+  // Second line
+  ctx.strokeStyle = gold(0.08);
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(CX - 90, hY + 6);
+  ctx.lineTo(CX + 90, hY + 6);
+  ctx.stroke();
+
+  // Reflection glow below
+  const refGrad = ctx.createRadialGradient(CX, hY + 15, 0, CX, hY + 15, 60);
+  refGrad.addColorStop(0, gold(0.06));
+  refGrad.addColorStop(1, 'rgba(201,168,76,0)');
+  ctx.fillStyle = refGrad;
+  ctx.fillRect(CX - 80, hY + 2, 160, 40);
+}
+
+// ============ AMBIENT PARTICLES ============
+const ambientPts = [];
+for (let i = 0; i < 45; i++) {
+  ambientPts.push({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    vx: (Math.random() - 0.5) * 0.15,
+    vy: -0.3 - Math.random() * 0.5,
+    size: 0.4 + Math.random() * 1.2,
+    alpha: 0.05 + Math.random() * 0.2,
+    phase: Math.random() * Math.PI * 2
+  });
+}
+
+function drawAmbient() {
+  for (const p of ambientPts) {
+    p.x += p.vx + Math.sin(t * 0.5 + p.phase) * 0.15;
+    p.y += p.vy;
+    if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+
+    const flicker = 0.6 + 0.4 * Math.sin(t * 2.5 + p.phase);
+    const a = p.alpha * flicker;
+    ctx.fillStyle = gold(a);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Tiny glow
+    if (p.size > 1) drawGlow(p.x, p.y, p.size * 2.5, a * 0.2);
+  }
+}
+
+function drawSparks() {
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const s = sparks[i];
+    s.x += s.vx;
+    s.y += s.vy;
+    s.vy -= 0.01; // sparks float upward
+    s.vx *= 0.99;
+    s.life--;
+    if (s.life <= 0) { sparks.splice(i, 1); continue; }
+
+    const a = (s.life / s.max);
+    ctx.fillStyle = warmGold(a * 0.9);
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size * a, 0, Math.PI * 2);
+    ctx.fill();
+    drawGlow(s.x, s.y, s.size * 3 * a, a * 0.2);
+  }
+}
+
+// ============ MAIN LOOP ============
+function animate() {
+  t += 0.016;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background subtle warmth
+  const bgGrad = ctx.createRadialGradient(CX, CY, 50, CX, CY, 300);
+  bgGrad.addColorStop(0, 'rgba(201,168,76,0.02)');
+  bgGrad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  drawAmbient();
+
+  // Draw flame rays BEHIND the disc
+  for (const ray of flameRays) {
+    drawFlameRay(ray);
+  }
+
+  drawHorizon();
+  drawSunDisc();
+  drawSparks();
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>

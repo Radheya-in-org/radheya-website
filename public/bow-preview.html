@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vijaya Bow Preview</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0A0A0A;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+  .scene { position: relative; width: 420px; height: 480px; }
+  canvas { display: block; }
+  .label {
+    position: absolute;
+    bottom: -8px;
+    left: 0; right: 0;
+    text-align: center;
+    color: rgba(201,168,76,0.45);
+    font-family: system-ui, sans-serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="scene">
+  <canvas id="c" width="420" height="480"></canvas>
+  <div class="label">Vijaya · విజయ</div>
+</div>
+<script>
+const c = document.getElementById('c');
+const ctx = c.getContext('2d');
+const W = 420, H = 480;
+let t = 0;
+
+const sparks = [];
+function addSpark(x, y, vx, vy, life, color) {
+  sparks.push({ x, y, vx, vy, life, max: life, size: 0.5 + Math.random() * 2, color: color || 'gold' });
+}
+
+function gold(a) { return `rgba(201,168,76,${a})`; }
+function dark(a) { return `rgba(30,28,35,${a})`; }
+function warmGold(a) { return `rgba(230,195,70,${a})`; }
+function silver(a) { return `rgba(200,210,220,${a})`; }
+
+function drawGlow(x, y, r, color, alpha) {
+  const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, color.replace(/[\d.]+\)$/, `${alpha})`));
+  g.addColorStop(0.5, color.replace(/[\d.]+\)$/, `${alpha * 0.3})`));
+  g.addColorStop(1, color.replace(/[\d.]+\)$/, '0)'));
+  ctx.fillStyle = g;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+// ============ BOW GEOMETRY ============
+// The bow is angled ~45deg, upper-right to lower-left
+// Reference: dark body, thick with ornamental gold tips that curl outward
+
+const BOW_ANGLE = -Math.PI * 0.28; // tilted
+const BOW_CX = 245;
+const BOW_CY = 235;
+const BOW_LEN = 190; // half-length from center
+
+// Get point on bow arc
+function bowPoint(p) {
+  // p from -1 (bottom tip) to 1 (top tip)
+  const along = p * BOW_LEN;
+  const curve = Math.sin(p * Math.PI * 0.5) * 0; // straight for reference
+
+  // Main bow arc: quadratic curve
+  // The bow curves away from the string
+  const bowCurve = (1 - p * p) * 65 + Math.sin(t * 1.2) * 1.5 * (1 - p * p);
+
+  const cosA = Math.cos(BOW_ANGLE);
+  const sinA = Math.sin(BOW_ANGLE);
+  const perpX = -sinA;
+  const perpY = cosA;
+
+  return {
+    x: BOW_CX + along * cosA + bowCurve * perpX,
+    y: BOW_CY + along * sinA + bowCurve * perpY
+  };
+}
+
+function drawBowBody() {
+  const segments = 80;
+
+  // ---- OUTER BOW BODY (dark, thick) ----
+  // Build path points
+  const outerLeft = [];
+  const outerRight = [];
+
+  for (let i = 0; i <= segments; i++) {
+    const p = (i / segments) * 2 - 1; // -1 to 1
+    const pt = bowPoint(p);
+
+    // Width varies: thickest at center grip, tapers toward tips, then flares at ornaments
+    let width;
+    const absP = Math.abs(p);
+    if (absP < 0.08) {
+      width = 16; // grip section - thick
+    } else if (absP < 0.15) {
+      width = 14 + (0.15 - absP) * 30; // transition from grip
+    } else if (absP < 0.7) {
+      width = 10 + (1 - absP) * 6; // limb - medium, tapering
+    } else if (absP < 0.88) {
+      width = 6 + (absP - 0.7) * 15; // starts to flare for ornament
+    } else {
+      width = 8 + (absP - 0.88) * 60; // ornamental tip flare
+    }
+
+    const perpX = -Math.sin(BOW_ANGLE);
+    const perpY = Math.cos(BOW_ANGLE);
+
+    // Adjust perp based on local curve tangent
+    let tangentAngle = BOW_ANGLE;
+    if (i > 0 && i < segments) {
+      const prev = bowPoint((Math.max(0, i - 1) / segments) * 2 - 1);
+      const next = bowPoint((Math.min(segments, i + 1) / segments) * 2 - 1);
+      tangentAngle = Math.atan2(next.y - prev.y, next.x - prev.x);
+    }
+    const localPerpX = -Math.sin(tangentAngle);
+    const localPerpY = Math.cos(tangentAngle);
+
+    outerLeft.push({ x: pt.x + localPerpX * width / 2, y: pt.y + localPerpY * width / 2 });
+    outerRight.push({ x: pt.x - localPerpX * width / 2, y: pt.y - localPerpY * width / 2 });
+  }
+
+  // Draw dark bow body
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur = 15;
+
+  // Dark gradient body
+  const bodyGrad = ctx.createLinearGradient(
+    BOW_CX - 40, BOW_CY - 40,
+    BOW_CX + 40, BOW_CY + 40
+  );
+  bodyGrad.addColorStop(0, 'rgba(45,40,50,0.95)');
+  bodyGrad.addColorStop(0.3, 'rgba(35,32,40,0.95)');
+  bodyGrad.addColorStop(0.5, 'rgba(55,50,60,0.9)');
+  bodyGrad.addColorStop(0.7, 'rgba(35,32,40,0.95)');
+  bodyGrad.addColorStop(1, 'rgba(45,40,50,0.95)');
+
+  ctx.fillStyle = bodyGrad;
+  ctx.beginPath();
+  ctx.moveTo(outerLeft[0].x, outerLeft[0].y);
+  for (let i = 1; i < outerLeft.length; i++) {
+    ctx.lineTo(outerLeft[i].x, outerLeft[i].y);
+  }
+  for (let i = outerRight.length - 1; i >= 0; i--) {
+    ctx.lineTo(outerRight[i].x, outerRight[i].y);
+  }
+  ctx.closePath();
+  ctx.fill();
+
+  // Edge highlight
+  ctx.strokeStyle = 'rgba(80,75,90,0.4)';
+  ctx.lineWidth = 0.8;
+  ctx.beginPath();
+  for (let i = 0; i < outerLeft.length; i++) {
+    i === 0 ? ctx.moveTo(outerLeft[i].x, outerLeft[i].y) : ctx.lineTo(outerLeft[i].x, outerLeft[i].y);
+  }
+  ctx.stroke();
+  ctx.beginPath();
+  for (let i = 0; i < outerRight.length; i++) {
+    i === 0 ? ctx.moveTo(outerRight[i].x, outerRight[i].y) : ctx.lineTo(outerRight[i].x, outerRight[i].y);
+  }
+  ctx.stroke();
+
+  ctx.restore();
+
+  // ---- GRIP (center wrap) ----
+  const gripPt = bowPoint(0);
+  ctx.save();
+  ctx.translate(gripPt.x, gripPt.y);
+  ctx.rotate(BOW_ANGLE + Math.PI / 2);
+
+  // Dark leather grip
+  const gripGrad = ctx.createLinearGradient(-8, -22, 8, 22);
+  gripGrad.addColorStop(0, 'rgba(60,45,35,0.9)');
+  gripGrad.addColorStop(0.5, 'rgba(80,60,45,0.9)');
+  gripGrad.addColorStop(1, 'rgba(50,38,28,0.9)');
+  ctx.fillStyle = gripGrad;
+  ctx.fillRect(-9, -22, 18, 44);
+
+  // Grip wrap lines
+  ctx.strokeStyle = 'rgba(100,75,55,0.4)';
+  ctx.lineWidth = 0.6;
+  for (let i = -20; i <= 20; i += 4) {
+    ctx.beginPath();
+    ctx.moveTo(-8, i);
+    ctx.lineTo(8, i + 3);
+    ctx.stroke();
+  }
+
+  // Gold bands at grip edges
+  ctx.fillStyle = gold(0.6);
+  ctx.fillRect(-10, -23, 20, 3);
+  ctx.fillRect(-10, 20, 20, 3);
+
+  ctx.restore();
+
+  // ---- GOLD ORNAMENTAL TIPS ----
+  drawOrnamentalTip(1);  // top tip
+  drawOrnamentalTip(-1); // bottom tip
+}
+
+function drawOrnamentalTip(dir) {
+  // dir: 1 = top, -1 = bottom
+  const tipPt = bowPoint(dir * 0.95);
+  const endPt = bowPoint(dir);
+
+  // Tangent at tip
+  const nearPt = bowPoint(dir * 0.9);
+  const tangent = Math.atan2(endPt.y - nearPt.y, endPt.x - nearPt.x);
+  const perp = tangent + Math.PI / 2;
+
+  ctx.save();
+  ctx.translate(endPt.x, endPt.y);
+  ctx.rotate(tangent);
+
+  const pulse = 0.8 + 0.2 * Math.sin(t * 2 + dir);
+
+  // Gold ornamental wing/flame shape — curling outward
+  // Main ornament body
+  ctx.fillStyle = gold(0.75 * pulse);
+  ctx.strokeStyle = warmGold(0.5 * pulse);
+  ctx.lineWidth = 1;
+
+  // Right curl (outward from bow)
+  ctx.beginPath();
+  ctx.moveTo(0, -6);
+  ctx.quadraticCurveTo(15, -12, 25, -8);
+  ctx.quadraticCurveTo(32, -4, 28, 2);
+  ctx.quadraticCurveTo(22, 6, 12, 3);
+  ctx.quadraticCurveTo(5, 1, 0, 6);
+  ctx.closePath();
+
+  const ornGrad = ctx.createLinearGradient(0, -8, 25, 0);
+  ornGrad.addColorStop(0, gold(0.8 * pulse));
+  ornGrad.addColorStop(0.4, warmGold(0.7 * pulse));
+  ornGrad.addColorStop(1, gold(0.4 * pulse));
+  ctx.fillStyle = ornGrad;
+  ctx.fill();
+  ctx.stroke();
+
+  // Inner detail line
+  ctx.strokeStyle = warmGold(0.3 * pulse);
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(3, -3);
+  ctx.quadraticCurveTo(15, -8, 22, -4);
+  ctx.stroke();
+
+  // Left curl (smaller, inner side)
+  ctx.beginPath();
+  ctx.moveTo(0, 6);
+  ctx.quadraticCurveTo(10, 10, 16, 8);
+  ctx.quadraticCurveTo(20, 5, 18, 1);
+  ctx.quadraticCurveTo(14, -1, 8, 2);
+  ctx.quadraticCurveTo(3, 4, 0, -2);
+  ctx.closePath();
+
+  const ornGrad2 = ctx.createLinearGradient(0, 6, 18, 2);
+  ornGrad2.addColorStop(0, gold(0.65 * pulse));
+  ornGrad2.addColorStop(1, gold(0.3 * pulse));
+  ctx.fillStyle = ornGrad2;
+  ctx.fill();
+
+  // Pointed tip extension
+  ctx.fillStyle = gold(0.7 * pulse);
+  ctx.beginPath();
+  ctx.moveTo(25, -6);
+  ctx.quadraticCurveTo(35, -15, 38, -20);
+  ctx.quadraticCurveTo(36, -14, 28, -5);
+  ctx.closePath();
+  ctx.fill();
+
+  // String notch
+  ctx.strokeStyle = gold(0.5);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(-2, -2);
+  ctx.lineTo(-2, 2);
+  ctx.stroke();
+
+  // Glow around ornament
+  drawGlow(15, -2, 25, gold(0.3), 0.15 * pulse);
+
+  ctx.restore();
+
+  // Emit sparks occasionally from tips
+  if (Math.random() < 0.03) {
+    addSpark(endPt.x + Math.cos(tangent) * 20, endPt.y + Math.sin(tangent) * 20,
+      (Math.random() - 0.5) * 1.5, (Math.random() - 0.5) * 1.5 - 0.5,
+      30 + Math.random() * 25, 'gold');
+  }
+}
+
+// ============ BOWSTRING ============
+function drawBowstring() {
+  const topTip = bowPoint(1);
+  const bottomTip = bowPoint(-1);
+
+  // String pull point (where arrow nock is)
+  const pullAmount = 55 + Math.sin(t * 0.8) * 3;
+  const midX = (topTip.x + bottomTip.x) / 2;
+  const midY = (topTip.y + bottomTip.y) / 2;
+  const perpX = -Math.sin(BOW_ANGLE);
+  const perpY = Math.cos(BOW_ANGLE);
+
+  const pullX = midX - perpX * pullAmount;
+  const pullY = midY - perpY * pullAmount;
+
+  // String
+  ctx.save();
+  ctx.shadowColor = silver(0.2);
+  ctx.shadowBlur = 3;
+  ctx.strokeStyle = silver(0.5);
+  ctx.lineWidth = 0.8;
+
+  // Top half of string
+  ctx.beginPath();
+  ctx.moveTo(topTip.x, topTip.y);
+  ctx.lineTo(pullX, pullY);
+  ctx.stroke();
+
+  // Bottom half of string
+  ctx.beginPath();
+  ctx.moveTo(bottomTip.x, bottomTip.y);
+  ctx.lineTo(pullX, pullY);
+  ctx.stroke();
+
+  ctx.restore();
+
+  // Tension glow at pull point
+  drawGlow(pullX, pullY, 12, gold(0.3), 0.2 + Math.sin(t * 2) * 0.08);
+
+  return { pullX, pullY };
+}
+
+// ============ ARROW ============
+function drawArrow(pullX, pullY) {
+  // Arrow direction: aimed upper-left from pull point (opposite of bow curve direction)
+  const aimAngle = BOW_ANGLE + Math.PI + Math.sin(t * 0.5) * 0.015;
+  const arrowLen = 175;
+
+  const tipX = pullX + Math.cos(aimAngle) * arrowLen;
+  const tipY = pullY + Math.sin(aimAngle) * arrowLen;
+
+  // ---- ARROW SHAFT ----
+  // Brown/wooden shaft
+  const shaftGrad = ctx.createLinearGradient(pullX, pullY, tipX, tipY);
+  shaftGrad.addColorStop(0, 'rgba(140,90,55,0.8)');
+  shaftGrad.addColorStop(0.3, 'rgba(160,105,65,0.85)');
+  shaftGrad.addColorStop(0.6, 'rgba(130,85,50,0.8)');
+  shaftGrad.addColorStop(1, 'rgba(100,70,45,0.7)');
+
+  ctx.save();
+  ctx.shadowColor = gold(0.15);
+  ctx.shadowBlur = 4;
+  ctx.strokeStyle = shaftGrad;
+  ctx.lineWidth = 3;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(pullX, pullY);
+  ctx.lineTo(tipX, tipY);
+  ctx.stroke();
+
+  // Shaft highlight
+  ctx.strokeStyle = 'rgba(180,130,80,0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pullX, pullY);
+  ctx.lineTo(tipX, tipY);
+  ctx.stroke();
+  ctx.restore();
+
+  // ---- ARROWHEAD ---- (silver/steel)
+  const headLen = 18;
+  const headWidth = 7;
+  const hx = tipX + Math.cos(aimAngle) * headLen;
+  const hy = tipY + Math.sin(aimAngle) * headLen;
+
+  const pAngle = aimAngle + Math.PI / 2;
+
+  ctx.save();
+  ctx.shadowColor = silver(0.4);
+  ctx.shadowBlur = 6;
+
+  const headGrad = ctx.createLinearGradient(tipX, tipY, hx, hy);
+  headGrad.addColorStop(0, silver(0.6));
+  headGrad.addColorStop(0.5, 'rgba(220,225,235,0.8)');
+  headGrad.addColorStop(1, silver(0.5));
+
+  ctx.fillStyle = headGrad;
+  ctx.beginPath();
+  ctx.moveTo(hx, hy); // tip point
+  ctx.lineTo(tipX + Math.cos(pAngle) * headWidth, tipY + Math.sin(pAngle) * headWidth);
+  ctx.lineTo(tipX - Math.cos(aimAngle) * 3, tipY - Math.sin(aimAngle) * 3); // notch
+  ctx.lineTo(tipX - Math.cos(pAngle) * headWidth, tipY - Math.sin(pAngle) * headWidth);
+  ctx.closePath();
+  ctx.fill();
+
+  // Head edge highlight
+  ctx.strokeStyle = 'rgba(240,245,255,0.3)';
+  ctx.lineWidth = 0.5;
+  ctx.stroke();
+
+  // Center ridge
+  ctx.strokeStyle = silver(0.3);
+  ctx.lineWidth = 0.5;
+  ctx.beginPath();
+  ctx.moveTo(tipX, tipY);
+  ctx.lineTo(hx, hy);
+  ctx.stroke();
+  ctx.restore();
+
+  // ---- FLETCHING ---- (white feathers at nock end)
+  const fletchStart = pullX;
+  const fletchStartY = pullY;
+  const fletchLen = 28;
+  const fletchAngle1 = aimAngle + Math.PI + 0.25;
+  const fletchAngle2 = aimAngle + Math.PI - 0.25;
+  const fletchAngle3 = aimAngle + Math.PI;
+
+  function drawFeather(fAngle, side) {
+    const endFx = fletchStart + Math.cos(fAngle) * fletchLen;
+    const endFy = fletchStartY + Math.sin(fAngle) * fletchLen;
+    const midFx = fletchStart + Math.cos(fAngle) * fletchLen * 0.5;
+    const midFy = fletchStartY + Math.sin(fAngle) * fletchLen * 0.5;
+
+    const fPerp = fAngle + Math.PI / 2;
+    const featherWidth = 5 * side;
+
+    ctx.fillStyle = 'rgba(220,215,210,0.25)';
+    ctx.beginPath();
+    ctx.moveTo(fletchStart, fletchStartY);
+    ctx.quadraticCurveTo(
+      midFx + Math.cos(fPerp) * featherWidth,
+      midFy + Math.sin(fPerp) * featherWidth,
+      endFx, endFy
+    );
+    ctx.lineTo(fletchStart + Math.cos(fAngle) * fletchLen * 0.95, fletchStartY + Math.sin(fAngle) * fletchLen * 0.95);
+    ctx.quadraticCurveTo(
+      midFx + Math.cos(fPerp) * featherWidth * 0.2,
+      midFy + Math.sin(fPerp) * featherWidth * 0.2,
+      fletchStart, fletchStartY
+    );
+    ctx.fill();
+
+    // Feather spine
+    ctx.strokeStyle = 'rgba(200,195,190,0.3)';
+    ctx.lineWidth = 0.4;
+    ctx.beginPath();
+    ctx.moveTo(fletchStart, fletchStartY);
+    ctx.lineTo(endFx, endFy);
+    ctx.stroke();
+  }
+
+  drawFeather(fletchAngle1, 1);
+  drawFeather(fletchAngle2, -1);
+  drawFeather(fletchAngle3, 1);
+  drawFeather(fletchAngle3, -1);
+
+  // Arrow tip glow / energy
+  drawGlow(hx, hy, 15, gold(0.3), 0.2 + Math.sin(t * 3) * 0.1);
+
+  // Sparks from arrowhead
+  if (Math.random() < 0.04) {
+    addSpark(hx, hy,
+      Math.cos(aimAngle) * 2 + (Math.random()-0.5) * 1.5,
+      Math.sin(aimAngle) * 2 + (Math.random()-0.5) * 1.5,
+      25 + Math.random() * 20, 'gold');
+  }
+}
+
+// ============ ENERGY AURA ============
+function drawEnergyAura() {
+  // Subtle golden energy around the bow
+  const pulse = 0.5 + 0.5 * Math.sin(t * 1.2);
+  drawGlow(BOW_CX, BOW_CY, 140, gold(0.3), 0.025 * pulse);
+  drawGlow(BOW_CX - 20, BOW_CY - 10, 100, gold(0.3), 0.04 * pulse);
+
+  // Energy wisps along bow limbs
+  for (let i = 0; i < 5; i++) {
+    const p = (i / 4) * 1.6 - 0.8;
+    const pt = bowPoint(p);
+    const wispAlpha = 0.03 + 0.02 * Math.sin(t * 2 + i * 1.3);
+    drawGlow(pt.x, pt.y, 20, gold(0.3), wispAlpha);
+  }
+}
+
+// ============ AMBIENT PARTICLES ============
+const ambientPts = [];
+for (let i = 0; i < 35; i++) {
+  ambientPts.push({
+    x: Math.random() * W,
+    y: Math.random() * H,
+    vx: (Math.random() - 0.5) * 0.12,
+    vy: -0.15 - Math.random() * 0.4,
+    size: 0.3 + Math.random() * 1,
+    alpha: 0.04 + Math.random() * 0.15,
+    phase: Math.random() * Math.PI * 2
+  });
+}
+
+function drawAmbient() {
+  for (const p of ambientPts) {
+    p.x += p.vx + Math.sin(t * 0.4 + p.phase) * 0.1;
+    p.y += p.vy;
+    if (p.y < -10) { p.y = H + 10; p.x = Math.random() * W; }
+
+    const flicker = 0.6 + 0.4 * Math.sin(t * 2 + p.phase);
+    ctx.fillStyle = gold(p.alpha * flicker);
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function drawSparks() {
+  for (let i = sparks.length - 1; i >= 0; i--) {
+    const s = sparks[i];
+    s.x += s.vx;
+    s.y += s.vy;
+    s.vy += 0.012;
+    s.life--;
+    if (s.life <= 0) { sparks.splice(i, 1); continue; }
+
+    const a = s.life / s.max;
+    const col = s.color === 'gold' ? warmGold(a * 0.8) : silver(a * 0.7);
+    ctx.fillStyle = col;
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.size * a, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ============ MAIN LOOP ============
+function animate() {
+  t += 0.016;
+  ctx.clearRect(0, 0, W, H);
+
+  drawAmbient();
+  drawEnergyAura();
+  drawBowBody();
+  drawBowstring();
+  const { pullX, pullY } = drawBowstring();
+  drawArrow(pullX, pullY);
+  drawSparks();
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+</body>
+</html>
