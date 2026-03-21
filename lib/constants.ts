@@ -190,12 +190,6 @@ export const BLOG_POSTS = [
 
 export const TEAM = [
   {
-    name: 'Arun Adepu',
-    role: 'CEO & Founder',
-    bio: 'A builder at heart. Believes that the best software comes from understanding problems deeply before writing a single line of code.',
-    image: '/images/team/arun-adepu.png',
-  },
-  {
     name: 'Mahendher Padma',
     role: 'CTO',
     bio: 'Architects robust systems and leads the engineering vision. Turns complex technical challenges into elegant, scalable solutions.',
@@ -212,6 +206,12 @@ export const TEAM = [
     role: 'CFO',
     bio: 'Steers financial strategy with precision. Ensures every investment aligns with our mission of building software that matters.',
     image: null,
+  },
+  {
+    name: 'Arun Adepu',
+    role: 'Engineering & Vision',
+    bio: 'A builder at heart. Believes that the best software comes from understanding problems deeply before writing a single line of code.',
+    image: '/images/team/arun-adepu.png',
   },
   {
     name: 'Vishal Gajula',
