@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Mail, Linkedin, Twitter, Github } from 'lucide-react'
+import { Mail, Linkedin, Twitter, Github, Instagram, MessageCircle } from 'lucide-react'
 import { COMPANY, SERVICES } from '@/lib/constants'
 import ChariotWheel from '@/components/karna/ChariotWheel'
 import RadheyaLogo from '@/components/ui/RadheyaLogo'
@@ -26,6 +26,8 @@ const socialLinks = [
   { icon: Linkedin, href: COMPANY.socials.linkedin, label: 'LinkedIn' },
   { icon: Twitter, href: COMPANY.socials.twitter, label: 'Twitter / X' },
   { icon: Github, href: COMPANY.socials.github, label: 'GitHub' },
+  { icon: Instagram, href: COMPANY.socials.instagram, label: 'Instagram' },
+  { icon: MessageCircle, href: COMPANY.socials.whatsapp, label: 'WhatsApp' },
 ]
 
 export default function Footer() {

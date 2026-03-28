@@ -3,12 +3,14 @@ export const COMPANY = {
   nameTelugu: 'రాధేయ',
   tagline: 'Solving Tomorrow, Today.',
   description: 'We build products that solve real-world problems and craft custom software for businesses that demand excellence.',
-  email: 'arunadepu141@gmail.com',
+  email: 'hello@radheya.in',
   location: 'India',
   socials: {
     linkedin: 'https://linkedin.com/company/radheya',
     twitter: 'https://x.com/radheya',
     github: 'https://github.com/radheya',
+    instagram: 'https://www.instagram.com/_radheya.in/',
+    whatsapp: 'https://whatsapp.com/channel/0029VbC7WTYH5JM3Y2aZXz3Y',
   },
 } as const
 

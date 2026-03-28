@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { Mail, MapPin, Linkedin, Twitter, Github } from 'lucide-react'
+import { Mail, MapPin, Linkedin, Twitter, Github, Instagram, MessageCircle } from 'lucide-react'
 import ContactForm from '@/components/contact/ContactForm'
 import { COMPANY } from '@/lib/constants'
 import { fadeInUp, fadeInLeft, fadeInRight } from '@/lib/animations'
@@ -135,6 +135,22 @@ export default function ContactPageClient() {
                   className="w-10 h-10 rounded-lg border border-subtle/30 flex items-center justify-center text-muted hover:text-accent hover:border-accent/30 transition-all"
                 >
                   <Github size={18} />
+                </a>
+                <a
+                  href={COMPANY.socials.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-lg border border-subtle/30 flex items-center justify-center text-muted hover:text-accent hover:border-accent/30 transition-all"
+                >
+                  <Instagram size={18} />
+                </a>
+                <a
+                  href={COMPANY.socials.whatsapp}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-lg border border-subtle/30 flex items-center justify-center text-muted hover:text-accent hover:border-accent/30 transition-all"
+                >
+                  <MessageCircle size={18} />
                 </a>
               </div>
             </div>

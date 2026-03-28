@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="48%" r="60%">
+      <stop offset="0%" stop-color="#8B1A1A" />
+      <stop offset="55%" stop-color="#5C0E0E" />
+      <stop offset="100%" stop-color="#2D0606" />
+    </radialGradient>
+    <radialGradient id="sunFill" cx="42%" cy="38%" r="58%">
+      <stop offset="0%" stop-color="#FFD700" />
+      <stop offset="35%" stop-color="#F0C030" />
+      <stop offset="100%" stop-color="#D4A017" />
+    </radialGradient>
+    <linearGradient id="fg" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#D4A017" />
+      <stop offset="50%" stop-color="#F0C030" />
+      <stop offset="100%" stop-color="#E8B820" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="1080" fill="url(#bg)" />
+
+  <g transform="translate(540, 595)" fill="url(#fg)">
+
+    <!-- ===== THICK FLOWING FLAME RAYS ===== -->
+
+    <!-- Center top — tallest, fat with curling tip -->
+    <path d="M-22,-105 C-28,-150 -35,-200 -30,-260 C-25,-290 -15,-310 -5,-315
+             C5,-310 15,-290 20,-260 C25,-200 22,-150 18,-105 Z" />
+
+    <!-- Left of center top -->
+    <path d="M-48,-98 C-55,-140 -72,-195 -65,-265 C-60,-285 -48,-288 -42,-270
+             C-35,-210 -38,-148 -32,-98 Z" />
+
+    <!-- Right of center top -->
+    <path d="M32,-98 C38,-140 52,-190 48,-260 C45,-280 35,-282 30,-265
+             C24,-205 28,-148 25,-98 Z" />
+
+    <!-- Left sweep 1 — thick curving flame -->
+    <path d="M-68,-82 C-82,-120 -120,-175 -118,-240 C-116,-262 -102,-268 -95,-250
+             C-82,-200 -72,-140 -52,-85 Z" />
+
+    <!-- Right sweep 1 -->
+    <path d="M52,-82 C68,-120 105,-170 105,-235 C104,-258 90,-262 84,-245
+             C72,-195 65,-140 45,-85 Z" />
+
+    <!-- Left sweep 2 — wider, thicker -->
+    <path d="M-85,-58 C-108,-95 -162,-148 -172,-210 C-174,-232 -160,-240 -150,-222
+             C-135,-172 -105,-112 -72,-62 Z" />
+
+    <!-- Right sweep 2 -->
+    <path d="M72,-58 C95,-95 148,-142 162,-205 C164,-228 150,-235 142,-218
+             C128,-168 100,-112 62,-62 Z" />
+
+    <!-- Left sweep 3 — dramatic wide curl -->
+    <path d="M-98,-30 C-130,-60 -195,-105 -215,-168 C-220,-190 -208,-198 -198,-180
+             C-178,-128 -132,-75 -88,-38 Z" />
+
+    <!-- Right sweep 3 -->
+    <path d="M88,-30 C120,-60 182,-100 205,-162 C210,-184 198,-192 190,-175
+             C172,-125 125,-75 80,-38 Z" />
+
+    <!-- Left sweep 4 — nearly horizontal thick flame -->
+    <path d="M-105,-2 C-145,-18 -218,-42 -252,-95 C-260,-115 -248,-124 -238,-108
+             C-210,-62 -152,-30 -100,-12 Z" />
+
+    <!-- Right sweep 4 -->
+    <path d="M100,-2 C138,-18 208,-38 245,-88 C252,-108 240,-116 232,-102
+             C206,-58 148,-30 96,-12 Z" />
+
+    <!-- Left sweep 5 — low side flame -->
+    <path d="M-108,28 C-152,18 -228,8 -268,-30 C-278,-48 -265,-58 -255,-42
+             C-228,-8 -158,10 -105,18 Z" />
+
+    <!-- Right sweep 5 -->
+    <path d="M105,28 C148,18 222,10 262,-25 C272,-42 260,-52 250,-38
+             C225,-5 155,10 102,18 Z" />
+
+    <!-- Left lowest flame — sweeps sideways -->
+    <path d="M-110,52 C-152,48 -225,50 -262,25 C-272,14 -262,6 -252,15
+             C-225,35 -158,42 -108,40 Z" />
+
+    <!-- Right lowest flame -->
+    <path d="M108,52 C148,48 220,48 258,22 C268,12 258,4 248,12
+             C222,32 155,42 105,40 Z" />
+
+    <!-- Sun disc -->
+    <circle cx="0" cy="0" r="108" fill="url(#sunFill)" />
+
+    <!-- Horizon base -->
+    <ellipse cx="0" cy="112" rx="140" ry="15" fill="#D4A017" opacity="0.7" />
+    <ellipse cx="0" cy="118" rx="105" ry="6" fill="#D4A017" opacity="0.35" />
+  </g>
+</svg>
