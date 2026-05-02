@@ -206,6 +206,13 @@ export const TEAM = [
     linkedin: 'https://www.linkedin.com/in/mahendhar-padma-0418241b7/',
   },
   {
+    name: 'Rohith Aerva',
+    role: 'Marketing Head & DevOps Lead',
+    tagline: 'Keeps the infrastructure alive',
+    image: null,
+    linkedin: 'https://www.linkedin.com/in/rohith-aerva-9980652b5/',
+  },
+  {
     name: 'Uday Sunkari',
     role: 'Head of Engineering',
     tagline: 'Ships the roadmap on time',
@@ -253,13 +260,6 @@ export const TEAM = [
     tagline: 'Teaches machines to think',
     image: null,
     linkedin: 'https://www.linkedin.com/in/naresh-edagotti-6a71a1233/',
-  },
-  {
-    name: 'Rohith Aerva',
-    role: 'Marketing Head & DevOps Lead',
-    tagline: 'Keeps the infrastructure alive',
-    image: null,
-    linkedin: 'https://www.linkedin.com/in/rohith-aerva-9980652b5/',
   },
 ] as const
 
