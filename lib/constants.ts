@@ -192,11 +192,25 @@ export const BLOG_POSTS = [
 
 export const TEAM = [
   {
+    name: 'Sai Teja Chunchu',
+    role: 'Chief Executive Officer',
+    tagline: 'Sets the direction, holds the line',
+    image: null,
+    linkedin: '#',
+  },
+  {
     name: 'Mahendher Padma',
-    role: 'CTO',
+    role: 'Chief Technical Officer',
     tagline: 'Builds systems that scale',
     image: null,
     linkedin: 'https://www.linkedin.com/in/mahendhar-padma-0418241b7/',
+  },
+  {
+    name: 'Uday Sunkari',
+    role: 'Head of Engineering',
+    tagline: 'Ships the roadmap on time',
+    image: null,
+    linkedin: '#',
   },
   {
     name: 'Hari Krishna Vemula',
@@ -207,7 +221,7 @@ export const TEAM = [
   },
   {
     name: 'Sai Charan Vilasagaram',
-    role: 'CFO',
+    role: 'Chief Financial Officer',
     tagline: 'Makes the numbers talk',
     image: null,
     linkedin: 'https://www.linkedin.com/in/saicharan2804/',
@@ -228,21 +242,21 @@ export const TEAM = [
   },
   {
     name: 'Manjunath Dudam',
-    role: 'CSO',
+    role: 'Chief Strategy Officer',
     tagline: 'Connects strategy to action',
     image: null,
     linkedin: 'https://www.linkedin.com/in/manjunath-dudam-43998a23b/',
   },
   {
     name: 'Naresh Edagotti',
-    role: 'AI & ML',
+    role: 'Artificial Intelligence & Machine Learning',
     tagline: 'Teaches machines to think',
     image: null,
     linkedin: 'https://www.linkedin.com/in/naresh-edagotti-6a71a1233/',
   },
   {
     name: 'Rohith Aerva',
-    role: 'DevOps Lead',
+    role: 'Marketing Head & DevOps Lead',
     tagline: 'Keeps the infrastructure alive',
     image: null,
     linkedin: 'https://www.linkedin.com/in/rohith-aerva-9980652b5/',
