@@ -54,13 +54,18 @@ export const PRODUCTS = [
     status: 'live' as const,
   },
   {
-    name: 'Coming Soon',
-    tagline: 'Next product in development',
-    description: 'We are working on something new — a tool that will change how small businesses manage their operations. Stay tuned.',
-    features: [],
-    techStack: [],
-    url: '#',
-    status: 'upcoming' as const,
+    name: 'StudioMate',
+    tagline: 'CRM for Indian wedding photography studios',
+    description: 'Manage clients, bookings, packages, gallery delivery, and payments from one place — web + mobile, free APK download.',
+    features: [
+      'Bookings, calendar & client portal',
+      'Invoices + Razorpay collections',
+      'Mobile app with OTA updates',
+      'Free APK — no Play Store required',
+    ],
+    techStack: ['Angular 18', 'Node.js', 'React Native', 'Postgres'],
+    url: 'https://studiomate-web-production.up.railway.app',
+    status: 'live' as const,
   },
 ] as const
 
