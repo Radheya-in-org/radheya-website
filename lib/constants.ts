@@ -38,7 +38,19 @@ export const STATS = [
   { value: 100, suffix: '%', label: 'Purpose Driven' },
 ] as const
 
-export const PRODUCTS = [
+export type ProductStatus = 'live' | 'upcoming'
+
+export interface Product {
+  name: string
+  tagline: string
+  description: string
+  features: readonly string[]
+  techStack: readonly string[]
+  url: string
+  status: ProductStatus
+}
+
+export const PRODUCTS: readonly Product[] = [
   {
     name: 'MyNextStep.in',
     tagline: 'Career Navigator',
@@ -51,7 +63,7 @@ export const PRODUCTS = [
     ],
     techStack: ['Next.js', 'Python', 'GPT-4', 'PostgreSQL'],
     url: 'https://mynextstep.in',
-    status: 'live' as const,
+    status: 'live',
   },
   {
     name: 'StudioMate',
@@ -65,9 +77,9 @@ export const PRODUCTS = [
     ],
     techStack: ['Angular 18', 'Node.js', 'React Native', 'Postgres'],
     url: 'https://studiomate-web-production.up.railway.app',
-    status: 'live' as const,
+    status: 'live',
   },
-] as const
+]
 
 export const SERVICES = [
   {
