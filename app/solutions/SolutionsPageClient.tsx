@@ -30,15 +30,6 @@ const VERTICALS: Vertical[] = [
     href: '/solutions/education',
   },
   {
-    slug: 'fintech',
-    title: 'Fintech',
-    tagline: 'Coming soon',
-    description:
-      'Modern financial tools for India’s next billion. Designed for trust, built for scale.',
-    status: 'upcoming',
-    href: '#',
-  },
-  {
     slug: 'healthcare',
     title: 'Healthcare',
     tagline: 'Coming soon',
@@ -91,7 +82,7 @@ export default function SolutionsPageClient() {
       {/* Verticals grid */}
       <section className="py-16 px-6">
         <motion.div
-          className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
