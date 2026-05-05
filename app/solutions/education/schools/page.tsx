@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import SchoolsPageClient from './SchoolsPageClient'
 
 export const metadata: Metadata = {
-  title: 'School Websites — Build Your Quote',
+  title: 'School Websites — The Website Your School Deserves',
   description:
-    'Pick the pages and features your school needs. See the price live. Hourly-based, transparent, no fixed packages. Built by Radheya for schools in Telangana and across India.',
+    'Take your physical school fully online — every teacher, classroom, achievement, and alumni story. Built by Radheya for schools in Telangana and across India.',
 }
 
 export default function SchoolsPage() {
