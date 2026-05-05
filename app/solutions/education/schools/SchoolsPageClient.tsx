@@ -1,196 +1,147 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Check,
-  Camera,
-  PenTool,
-  Code2,
-  Rocket,
-  HeartHandshake,
-  ChevronDown,
-  MessageCircle,
-} from 'lucide-react'
-import SectionHeading from '@/components/ui/SectionHeading'
+import { Check, ChevronDown, MessageCircle, Clock } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import Card from '@/components/ui/Card'
 import PageTransition from '@/components/layout/PageTransition'
 import VijayaBow from '@/components/karna/VijayaBow'
-import { fadeInUp, staggerContainer, staggerItem } from '@/lib/animations'
+import { fadeInUp } from '@/lib/animations'
 import { COMPANY } from '@/lib/constants'
 
-interface Tier {
+const HOURLY_RATE = 800
+const PHOTOGRAPHY_FIXED = 5000
+
+interface Item {
   id: string
-  name: string
-  tagline: string
-  setup: string
-  monthly: string
-  bestFor: string
-  features: string[]
-  highlighted?: boolean
+  label: string
+  hint?: string
+  hours: number
+  required?: boolean
 }
 
-const TIERS: Tier[] = [
+interface Group {
+  id: string
+  title: string
+  subtitle: string
+  items: Item[]
+}
+
+interface SupportTier {
+  id: string
+  name: string
+  monthly: number
+  detail: string
+}
+
+const GROUPS: Group[] = [
   {
-    id: 'standard',
-    name: 'Standard',
-    tagline: 'Showcase',
-    setup: '₹49,999',
-    monthly: '₹999/month',
-    bestFor: 'Smaller schools — 300 to 700 students',
-    features: [
-      '8 to 10 pages, mobile responsive',
-      'Basic CMS (news + gallery)',
-      'Online inquiry form + WhatsApp button',
-      '1-year hosting + domain + SSL',
-      '2 professional email IDs',
-      'Monthly: hosting + 1 hour content updates',
+    id: 'pages',
+    title: 'Pages',
+    subtitle: 'Pick the pages your school needs.',
+    items: [
+      { id: 'home', label: 'Home', hint: 'Hero, achievements ticker, sections', hours: 8, required: true },
+      { id: 'about', label: 'About + Vision/Mission', hours: 4 },
+      { id: 'principal', label: 'Principal’s Message + Leadership', hours: 3 },
+      { id: 'academics', label: 'Academics / Curriculum', hours: 4 },
+      { id: 'admissions', label: 'Admissions + Inquiry Form', hours: 6 },
+      { id: 'faculty', label: 'Faculty / Staff', hours: 4 },
+      { id: 'gallery', label: 'Photo Gallery', hint: 'Categorized, lightbox, lazy load', hours: 6 },
+      { id: 'achievements', label: 'Achievements / Toppers', hours: 4 },
+      { id: 'news', label: 'News & Events', hours: 6 },
+      { id: 'infrastructure', label: 'Infrastructure / Campus Tour', hours: 4 },
+      { id: 'contact', label: 'Contact + Map', hours: 3 },
+      { id: 'blog', label: 'Blog', hours: 6 },
     ],
   },
   {
-    id: 'premium',
-    name: 'Premium',
-    tagline: 'Showcase Pro',
-    setup: '₹79,999',
-    monthly: '₹1,999/month',
-    bestFor: 'Established mid-tier schools — 700 to 1,200 students',
-    features: [
-      '12 to 15 pages, custom design',
-      'Full CMS (gallery, news, faculty, achievements, events)',
-      'Online admission inquiry with WhatsApp + email routing',
-      'Multi-campus support',
-      '5 professional email IDs',
-      'SEO setup + Google Search Console',
-      'Monthly: hosting + 3 hours content updates + WhatsApp support',
-    ],
-    highlighted: true,
-  },
-  {
-    id: 'elite',
-    name: 'Elite',
-    tagline: 'Showcase Pro+',
-    setup: '₹1,29,999',
-    monthly: '₹2,999/month',
-    bestFor: 'Top-end mid-tier schools — 1,000+ students',
-    features: [
-      'Everything in Premium',
-      'Professional photography day at your campus',
-      'Telugu + English language toggle',
-      '360° virtual campus tour',
-      'Newsletter setup + monthly mailer template',
-      'Local SEO (Google Business + citations)',
-      'Monthly: 5 hours content updates + quarterly review',
+    id: 'features',
+    title: 'Features',
+    subtitle: 'Pick capabilities to add on top.',
+    items: [
+      { id: 'cms-basic', label: 'CMS — News & Gallery', hint: 'Staff updates news + photos themselves', hours: 8 },
+      { id: 'cms-full', label: 'CMS — Full', hint: 'Add faculty, achievements, events, pages', hours: 16 },
+      { id: 'whatsapp-route', label: 'Inquiry → WhatsApp + Email Routing', hours: 4 },
+      { id: 'seo', label: 'SEO Setup + Schema Markup', hours: 4 },
+      { id: 'multi-campus', label: 'Multi-Campus Support', hours: 6 },
+      { id: 'telugu', label: 'Telugu / English Toggle', hours: 8 },
+      { id: 'virtual-tour', label: '360° Virtual Campus Tour', hours: 16 },
+      { id: 'newsletter', label: 'Newsletter Setup', hours: 4 },
+      { id: 'fee-payment', label: 'Online Fee Payment Integration', hours: 16 },
+      { id: 'parent-portal', label: 'Parent Login Portal', hours: 30 },
     ],
   },
 ]
 
-const INCLUDED = [
-  { title: 'Mobile-first design', body: '60%+ of parents browse on mobile. Every page is built for phones first.' },
-  { title: 'Self-service CMS', body: 'Your staff updates gallery, news, and achievements without calling us.' },
-  { title: 'Online admission inquiry', body: 'Form submissions route to WhatsApp + email instantly.' },
-  { title: 'Photo gallery', body: 'Categorized by event and year, with lightbox and lazy loading.' },
-  { title: 'Achievements showcase', body: 'Toppers, sports, cultural — with photos that build credibility.' },
-  { title: 'News & events', body: 'Auto-archived, searchable, and SEO-friendly.' },
-  { title: 'SEO + schema markup', body: 'Structured data for Google to recognize you as an EducationalOrganization.' },
-  { title: 'Multi-campus support', body: 'Different addresses, maps, and contact details per campus.' },
-  { title: 'Professional email', body: 'admissions@yourschool.in, principal@yourschool.in — your domain, not gmail.' },
-  { title: 'Automated backups', body: 'Daily backups, 30-day retention, restore on request.' },
-  { title: 'SSL + security', body: 'HTTPS, security headers, and uptime monitoring.' },
-  { title: 'Analytics + Search Console', body: 'Know which pages drive admission inquiries.' },
-]
-
-const PROCESS = [
-  {
-    step: '01',
-    title: 'Discovery',
-    icon: PenTool,
-    body: 'We meet your principal and correspondent, understand your school’s story, and lock the scope. Typically 2 to 3 days.',
-  },
-  {
-    step: '02',
-    title: 'Photography',
-    icon: Camera,
-    body: 'We visit your campus and capture infrastructure, classrooms, faculty, and student moments. Fresh photos, not stock.',
-  },
-  {
-    step: '03',
-    title: 'Design',
-    icon: PenTool,
-    body: 'We share design mockups in Figma. You review with your team. We iterate until it feels like your school.',
-  },
-  {
-    step: '04',
-    title: 'Build',
-    icon: Code2,
-    body: 'Development, content entry, CMS setup, email setup. We send weekly progress updates over WhatsApp.',
-  },
-  {
-    step: '05',
-    title: 'Launch',
-    icon: Rocket,
-    body: 'Domain pointed, SSL live, Google Search Console submitted. Staff trained on the CMS in person.',
-  },
-  {
-    step: '06',
-    title: 'Support',
-    icon: HeartHandshake,
-    body: 'We host, monitor, back up, and update. You message us on WhatsApp when you need something.',
-  },
+const SUPPORT_TIERS: SupportTier[] = [
+  { id: 'basic', name: 'Basic', monthly: 999, detail: 'Hosting, SSL, backups + 1 hr/month updates' },
+  { id: 'standard', name: 'Standard', monthly: 1999, detail: 'Above + 3 hr/month + WhatsApp support' },
+  { id: 'premium', name: 'Premium', monthly: 2999, detail: 'Above + 5 hr/month + quarterly review' },
 ]
 
 const FAQ: { q: string; a: string }[] = [
   {
-    q: 'Why ₹49,999 when Wix or Squarespace cost ₹3,000 a year?',
-    a: 'Because templates don’t convert parents. A Wix site looks like every other Wix site — it doesn’t tell your school’s story, doesn’t showcase your toppers and infrastructure, and doesn’t rank on Google. Schools that take admissions seriously invest in a real website. The ones that don’t will keep losing parents to schools that did.',
+    q: 'How is hourly pricing better than a fixed package?',
+    a: 'You only pay for what you use. A small school doesn’t need a parent portal — why pay for one? You pick what your school actually needs, and the price reflects exactly that.',
   },
   {
-    q: 'Can our staff update content themselves?',
-    a: 'Yes. Every plan includes a CMS — your office staff can add news, upload gallery photos, update achievements, and post events without writing any code. We train your team in person on launch day.',
+    q: 'What is your hourly rate?',
+    a: `₹${HOURLY_RATE}/hour for design + development. This is the team rate — covers UI design, frontend, CMS setup, content entry, and QA. There are no hidden charges; what you see in the calculator is what you pay.`,
   },
   {
-    q: 'Do we own the website if we stop working with Radheya?',
-    a: 'Yes. The content, photos, and design are yours from day one. If you ever want to leave, we hand over the codebase and migrate your domain to your new provider. No lock-in beyond the standard 12-month support contract.',
+    q: 'Why is photography a fixed cost?',
+    a: `It’s an out-of-pocket cost we pay our photographer + travel — not our team time. Flat ₹${PHOTOGRAPHY_FIXED.toLocaleString('en-IN')} covers a half-day shoot at your campus.`,
   },
   {
-    q: 'How long does it take from kick-off to launch?',
-    a: 'Standard: 4 to 5 weeks. Premium: 6 to 8 weeks. Elite: 8 to 10 weeks (the photography day adds time). We commit to dates in writing — no vague "soon" answers.',
+    q: 'What if we want changes after launch?',
+    a: 'Your monthly support tier includes maintenance hours. Bigger changes (new sections, new features) are billed at the same hourly rate — no surprises.',
   },
   {
-    q: 'Do we need to provide our own photos and content?',
-    a: 'For Standard and Premium, yes — you share existing photos, faculty bios, and achievement data. For Elite, our photographer comes to your campus. For all tiers, we help write and edit content so it sounds professional.',
-  },
-  {
-    q: 'Can the website be in Telugu?',
-    a: 'Yes — Elite plan includes a Telugu + English toggle. For Standard and Premium, we can add Telugu as a paid add-on (₹10,000) or build only in English.',
-  },
-  {
-    q: 'What does the monthly fee actually cover?',
-    a: 'Hosting, domain renewal, SSL renewal, professional email, daily backups, security monitoring, and a fixed number of hours of content/maintenance work per month (1 to 5 hours depending on tier). It is not a "sit on your money" fee — you use those hours every month.',
-  },
-  {
-    q: 'What if our school grows and we need more features later?',
-    a: 'Add-ons are à la carte: extra language (₹10K), virtual tour (₹15K), online fee payment (₹20K), parent portal (₹40K). Or upgrade to our School CRM and Bus Tracking products when they launch — same login, same support team.',
-  },
-  {
-    q: 'Are there any hidden costs?',
-    a: 'No. The setup fee is one-time. The monthly fee is fixed. Domain and hosting are included. The only extra costs are: optional add-ons (which you choose), or content updates beyond your monthly hours (₹1,000/hour, billed only if you ask).',
-  },
-  {
-    q: 'What if we need to cancel?',
-    a: '60-day notice on the monthly plan after the first 12 months. Setup fee is non-refundable once work has started. We will hand over your domain and backups gracefully.',
+    q: 'Do we own the website?',
+    a: 'Yes. Content, photos, design, and codebase are yours from day one. If you ever leave, we hand over everything.',
   },
 ]
 
 export default function SchoolsPageClient() {
+  const [selected, setSelected] = useState<Set<string>>(
+    () => new Set(GROUPS.flatMap((g) => g.items.filter((i) => i.required).map((i) => i.id)))
+  )
+  const [photography, setPhotography] = useState(false)
+  const [supportTier, setSupportTier] = useState<string>('standard')
+
+  const toggle = (id: string, required?: boolean) => {
+    if (required) return
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }
+
+  const totals = useMemo(() => {
+    const hours = GROUPS.flatMap((g) => g.items)
+      .filter((i) => selected.has(i.id))
+      .reduce((sum, i) => sum + i.hours, 0)
+    const teamCost = hours * HOURLY_RATE
+    const photoCost = photography ? PHOTOGRAPHY_FIXED : 0
+    const setup = teamCost + photoCost
+    const monthly = SUPPORT_TIERS.find((t) => t.id === supportTier)?.monthly ?? 0
+    return { hours, teamCost, photoCost, setup, monthly }
+  }, [selected, photography, supportTier])
+
   return (
     <PageTransition>
       <Hero />
-      <Problem />
-      <Pricing />
-      <Included />
-      <Hosting />
-      <Process />
+      <Configurator
+        selected={selected}
+        toggle={toggle}
+        photography={photography}
+        setPhotography={setPhotography}
+        supportTier={supportTier}
+        setSupportTier={setSupportTier}
+        totals={totals}
+      />
       <FAQSection />
       <FinalCTA />
     </PageTransition>
@@ -199,11 +150,11 @@ export default function SchoolsPageClient() {
 
 function Hero() {
   return (
-    <section className="relative pt-32 pb-16 px-6 overflow-hidden">
+    <section className="relative pt-32 pb-12 px-6 overflow-hidden">
       <div className="absolute top-20 right-8 hidden lg:block">
-        <VijayaBow size={220} opacity={0.04} />
+        <VijayaBow size={200} opacity={0.04} />
       </div>
-      <div className="max-w-6xl mx-auto text-center">
+      <div className="max-w-4xl mx-auto text-center">
         <motion.p
           className="font-ui text-accent text-xs uppercase tracking-[4px] mb-6"
           variants={fadeInUp}
@@ -213,354 +164,311 @@ function Hero() {
           Solutions / Education / Schools
         </motion.p>
         <motion.h1
-          className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-warm-ivory mb-6"
+          className="font-heading font-bold text-4xl md:text-5xl lg:text-6xl text-warm-ivory mb-5"
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
           transition={{ delay: 0.1 }}
         >
-          A school website that <span className="text-accent">drives admissions</span>
+          Build a website your <span className="text-accent">school actually needs</span>
         </motion.h1>
         <motion.p
-          className="font-body text-muted text-lg max-w-2xl mx-auto mb-10"
+          className="font-body text-muted text-lg max-w-xl mx-auto"
           variants={fadeInUp}
           initial="hidden"
           animate="visible"
           transition={{ delay: 0.2 }}
         >
-          Built for mid-tier private schools in Telangana and across India.
-          Real photography. Real story. Real conversions. Hosting, support, and
-          updates all included.
+          Pick your pages and features. See the price live. No fixed packages,
+          no inflated quotes.
         </motion.p>
-        <motion.div
-          className="flex flex-wrap items-center justify-center gap-4"
-          variants={fadeInUp}
-          initial="hidden"
-          animate="visible"
-          transition={{ delay: 0.3 }}
-        >
-          <Button variant="primary" href="#pricing" size="lg">
-            See Pricing
-          </Button>
-          <a
-            href={COMPANY.socials.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 text-lg border border-accent text-warm-ivory bg-transparent hover:bg-accent/10 font-heading font-semibold rounded-lg transition-colors duration-300"
-          >
-            <MessageCircle size={18} strokeWidth={2} />
-            WhatsApp Us
-          </a>
-        </motion.div>
       </div>
     </section>
   )
 }
 
-function Problem() {
-  const points = [
-    'Parents Google your school before they call. What they see decides whether they call.',
-    'Most school websites in Telangana look like 2012 — table layouts, broken galleries, dead phone numbers.',
-    'Your competitors are catching up. The schools winning admissions in 2026 invested in their digital first impression.',
-    'A great website is not vanity. It is the cheapest admissions team you will ever hire.',
-  ]
+interface ConfiguratorProps {
+  selected: Set<string>
+  toggle: (id: string, required?: boolean) => void
+  photography: boolean
+  setPhotography: (b: boolean) => void
+  supportTier: string
+  setSupportTier: (id: string) => void
+  totals: { hours: number; teamCost: number; photoCost: number; setup: number; monthly: number }
+}
+
+function Configurator({
+  selected,
+  toggle,
+  photography,
+  setPhotography,
+  supportTier,
+  setSupportTier,
+  totals,
+}: ConfiguratorProps) {
   return (
-    <section className="py-20 px-6">
-      <div className="max-w-4xl mx-auto">
-        <SectionHeading
-          title="Your website is your first admissions counsellor"
-          subtitle="It works 24/7, never takes leave, and either convinces parents — or sends them to your competitor."
-        />
-        <motion.ul
-          className="mt-12 space-y-6"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-        >
-          {points.map((point, i) => (
-            <motion.li
-              key={i}
-              variants={staggerItem}
-              className="flex items-start gap-4 font-body text-warm-ivory/80 text-lg leading-relaxed"
-            >
-              <span className="mt-2 flex-shrink-0 w-2 h-2 rounded-full bg-accent ring-2 ring-accent/30" />
-              <span>{point}</span>
-            </motion.li>
+    <section className="py-12 px-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 items-start">
+        <div className="space-y-10">
+          {GROUPS.map((group) => (
+            <GroupBlock
+              key={group.id}
+              group={group}
+              selected={selected}
+              toggle={toggle}
+            />
           ))}
-        </motion.ul>
-      </div>
-    </section>
-  )
-}
 
-function Pricing() {
-  return (
-    <section id="pricing" className="py-24 px-6 bg-dark-card/40">
-      <div className="max-w-6xl mx-auto">
-        <SectionHeading
-          title="Three plans, transparent pricing"
-          subtitle="Pick the one that fits your school size today. Upgrade anytime."
-        />
-        <motion.div
-          className="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-        >
-          {TIERS.map((tier) => (
-            <motion.div key={tier.id} variants={staggerItem}>
-              <TierCard tier={tier} />
-            </motion.div>
-          ))}
-        </motion.div>
-        <p className="mt-10 text-center font-body text-muted text-sm">
-          Custom requirements (multiple campuses, parent portal, online fee
-          collection, etc.)?{' '}
-          <a
-            href={COMPANY.socials.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent hover:text-accent/80 font-medium"
-          >
-            Talk to us →
-          </a>
-        </p>
-      </div>
-    </section>
-  )
-}
-
-function TierCard({ tier }: { tier: Tier }) {
-  const highlighted = tier.highlighted
-  return (
-    <Card
-      className={`relative p-8 h-full flex flex-col ${
-        highlighted ? 'border-accent/60 ring-1 ring-accent/30' : ''
-      }`}
-      tilt={false}
-    >
-      {highlighted && (
-        <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 text-xs font-heading font-semibold tracking-wider uppercase rounded-full bg-accent text-primary whitespace-nowrap">
-          Most Popular
-        </span>
-      )}
-      <p className="font-ui text-accent text-xs uppercase tracking-[3px] mb-2">
-        {tier.tagline}
-      </p>
-      <h3 className="font-heading text-3xl font-bold text-warm-ivory mb-4">
-        {tier.name}
-      </h3>
-
-      <div className="mb-2">
-        <span className="font-heading text-4xl font-bold text-warm-ivory">
-          {tier.setup}
-        </span>
-        <span className="font-body text-muted text-sm ml-2">one-time</span>
-      </div>
-      <p className="font-body text-warm-ivory/70 text-sm mb-1">
-        + <span className="font-heading text-accent font-semibold">{tier.monthly}</span>{' '}
-        managed
-      </p>
-      <p className="font-body text-muted text-xs mb-6 italic">
-        {tier.bestFor}
-      </p>
-
-      <ul className="space-y-3 mb-8 flex-1">
-        {tier.features.map((feature, i) => (
-          <li key={i} className="flex items-start gap-3">
-            <Check
-              className="mt-0.5 flex-shrink-0 text-accent"
-              size={16}
-              strokeWidth={2.5}
-            />
-            <span className="font-body text-warm-ivory/80 text-sm leading-relaxed">
-              {feature}
-            </span>
-          </li>
-        ))}
-      </ul>
-
-      <Button
-        variant={highlighted ? 'primary' : 'outline'}
-        href="/contact"
-        size="md"
-        className="w-full justify-center"
-      >
-        Get Started
-      </Button>
-    </Card>
-  )
-}
-
-function Included() {
-  return (
-    <section className="py-24 px-6">
-      <div className="max-w-6xl mx-auto">
-        <SectionHeading
-          title="What every plan includes"
-          subtitle="The basics aren’t add-ons. They’re defaults."
-        />
-        <motion.div
-          className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
-        >
-          {INCLUDED.map((item) => (
-            <motion.div
-              key={item.title}
-              variants={staggerItem}
-              className="p-6 border border-subtle/20 rounded-xl bg-dark-card/40 hover:border-accent/30 transition-colors duration-300"
-            >
-              <div className="flex items-start gap-3 mb-3">
-                <div className="mt-0.5 w-5 h-5 rounded-full border border-accent/40 flex items-center justify-center bg-accent/10 flex-shrink-0">
-                  <Check size={11} strokeWidth={3} className="text-accent" />
-                </div>
-                <h4 className="font-heading text-base font-semibold text-warm-ivory">
-                  {item.title}
-                </h4>
-              </div>
-              <p className="font-body text-warm-ivory/65 text-sm leading-relaxed pl-8">
-                {item.body}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </div>
-    </section>
-  )
-}
-
-function Hosting() {
-  return (
-    <section className="py-24 px-6 bg-dark-card/40">
-      <div className="max-w-5xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.6, ease: 'easeOut' }}
-          >
-            <p className="font-ui text-accent text-xs uppercase tracking-[3px] mb-4">
-              Hosting & Support
+          <div>
+            <h3 className="font-heading text-xl font-bold text-warm-ivory mb-1">
+              Photography
+            </h3>
+            <p className="font-body text-muted text-sm mb-4">
+              Half-day shoot at your campus. Skip if you have your own photos.
             </p>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-warm-ivory mb-6">
-              We host it. We maintain it. <span className="text-accent">We answer your WhatsApp.</span>
-            </h2>
-            <p className="font-body text-warm-ivory/70 leading-relaxed mb-4">
-              Most agencies build a website and disappear. Then your office
-              staff is stuck calling Hostinger Manila support at 9pm before
-              admission day, trying to figure out why the site is down.
-            </p>
-            <p className="font-body text-warm-ivory/70 leading-relaxed">
-              We don&apos;t do that. Your monthly fee covers hosting, security,
-              backups, uptime monitoring, and a real human you can WhatsApp.
-              The same team that built your site is the team that supports it.
-            </p>
-          </motion.div>
+            <Toggle
+              label="Photography day"
+              hint={`Flat ₹${PHOTOGRAPHY_FIXED.toLocaleString('en-IN')} (out-of-pocket cost)`}
+              checked={photography}
+              onClick={() => setPhotography(!photography)}
+              meta={`₹${PHOTOGRAPHY_FIXED.toLocaleString('en-IN')}`}
+            />
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-80px' }}
-            transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
-            className="space-y-4"
-          >
-            <SupportItem
-              title="Indian-region hosting"
-              body="Fast for parents in your city, not routed through Singapore."
-            />
-            <SupportItem
-              title="9am to 7pm support, Mon to Sat"
-              body="WhatsApp messages answered same-day. Emergencies (site down) handled outside hours."
-            />
-            <SupportItem
-              title="Daily automated backups"
-              body="Site goes down? We restore from yesterday in under an hour."
-            />
-            <SupportItem
-              title="Uptime monitoring"
-              body="We get alerted before you do. Most issues are fixed before anyone notices."
-            />
-          </motion.div>
+          <div>
+            <h3 className="font-heading text-xl font-bold text-warm-ivory mb-1">
+              Monthly Support
+            </h3>
+            <p className="font-body text-muted text-sm mb-4">
+              Hosting + ongoing updates. Pick one.
+            </p>
+            <div className="space-y-3">
+              {SUPPORT_TIERS.map((tier) => (
+                <SupportRow
+                  key={tier.id}
+                  tier={tier}
+                  active={supportTier === tier.id}
+                  onClick={() => setSupportTier(tier.id)}
+                />
+              ))}
+            </div>
+          </div>
         </div>
+
+        <SummaryCard totals={totals} />
       </div>
     </section>
   )
 }
 
-function SupportItem({ title, body }: { title: string; body: string }) {
+function GroupBlock({
+  group,
+  selected,
+  toggle,
+}: {
+  group: Group
+  selected: Set<string>
+  toggle: (id: string, required?: boolean) => void
+}) {
   return (
-    <div className="p-5 border border-subtle/20 rounded-xl bg-dark-card/60">
-      <h4 className="font-heading text-base font-semibold text-warm-ivory mb-1">
-        {title}
-      </h4>
-      <p className="font-body text-warm-ivory/65 text-sm leading-relaxed">
-        {body}
-      </p>
+    <div>
+      <h3 className="font-heading text-xl font-bold text-warm-ivory mb-1">
+        {group.title}
+      </h3>
+      <p className="font-body text-muted text-sm mb-4">{group.subtitle}</p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {group.items.map((item) => (
+          <Toggle
+            key={item.id}
+            label={item.label}
+            hint={item.hint}
+            checked={selected.has(item.id)}
+            onClick={() => toggle(item.id, item.required)}
+            meta={`${item.hours}h`}
+            disabled={item.required}
+          />
+        ))}
+      </div>
     </div>
   )
 }
 
-function Process() {
+function Toggle({
+  label,
+  hint,
+  checked,
+  onClick,
+  meta,
+  disabled,
+}: {
+  label: string
+  hint?: string
+  checked: boolean
+  onClick: () => void
+  meta: string
+  disabled?: boolean
+}) {
   return (
-    <section className="py-24 px-6">
-      <div className="max-w-6xl mx-auto">
-        <SectionHeading
-          title="How we build your website"
-          subtitle="A clear process, weekly updates, no surprises."
-        />
-        <motion.div
-          className="mt-16 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-80px' }}
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={`group flex items-center gap-3 p-4 rounded-xl border text-left transition-all duration-200 ${
+        checked
+          ? 'bg-accent/10 border-accent/50'
+          : 'bg-dark-card/40 border-subtle/30 hover:border-accent/30'
+      } ${disabled ? 'cursor-not-allowed opacity-90' : 'cursor-pointer'}`}
+      aria-pressed={checked}
+    >
+      <span
+        className={`flex-shrink-0 w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+          checked
+            ? 'bg-accent border-accent'
+            : 'bg-transparent border-subtle/50 group-hover:border-accent/50'
+        }`}
+      >
+        {checked && <Check size={12} strokeWidth={3} className="text-primary" />}
+      </span>
+      <span className="flex-1 min-w-0">
+        <span className="font-heading text-sm font-semibold text-warm-ivory block truncate">
+          {label}
+          {disabled && (
+            <span className="ml-2 font-ui text-[10px] uppercase tracking-wider text-accent/80">
+              required
+            </span>
+          )}
+        </span>
+        {hint && (
+          <span className="font-body text-xs text-muted block mt-0.5 truncate">
+            {hint}
+          </span>
+        )}
+      </span>
+      <span className="font-ui text-xs text-accent font-semibold flex-shrink-0">
+        {meta}
+      </span>
+    </button>
+  )
+}
+
+function SupportRow({
+  tier,
+  active,
+  onClick,
+}: {
+  tier: SupportTier
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+        active
+          ? 'bg-accent/10 border-accent/50'
+          : 'bg-dark-card/40 border-subtle/30 hover:border-accent/30'
+      }`}
+      aria-pressed={active}
+    >
+      <span
+        className={`flex-shrink-0 w-5 h-5 rounded-full border flex items-center justify-center transition-colors ${
+          active ? 'border-accent' : 'border-subtle/50'
+        }`}
+      >
+        {active && <span className="w-2.5 h-2.5 rounded-full bg-accent" />}
+      </span>
+      <span className="flex-1 min-w-0">
+        <span className="font-heading text-sm font-semibold text-warm-ivory block">
+          {tier.name}
+        </span>
+        <span className="font-body text-xs text-muted block mt-0.5">
+          {tier.detail}
+        </span>
+      </span>
+      <span className="font-ui text-sm text-accent font-semibold flex-shrink-0">
+        ₹{tier.monthly.toLocaleString('en-IN')}/mo
+      </span>
+    </button>
+  )
+}
+
+function SummaryCard({
+  totals,
+}: {
+  totals: { hours: number; teamCost: number; photoCost: number; setup: number; monthly: number }
+}) {
+  return (
+    <div className="lg:sticky lg:top-24">
+      <div className="bg-dark-card border border-accent/30 rounded-2xl p-6 shadow-[0_0_40px_rgba(201,168,76,0.08)]">
+        <p className="font-ui text-accent text-[10px] uppercase tracking-[3px] mb-4">
+          Your Quote
+        </p>
+
+        <div className="flex items-center gap-2 mb-1 text-warm-ivory/70 font-body text-sm">
+          <Clock size={14} className="text-accent" />
+          {totals.hours} hours × ₹{HOURLY_RATE}/hr
+        </div>
+        <p className="font-heading text-3xl font-bold text-warm-ivory mb-2">
+          ₹{totals.setup.toLocaleString('en-IN')}
+        </p>
+        <p className="font-body text-xs text-muted mb-6">one-time setup</p>
+
+        <div className="border-t border-subtle/30 pt-4 mb-6 space-y-2 text-sm">
+          <Row label="Design + dev" value={`₹${totals.teamCost.toLocaleString('en-IN')}`} />
+          {totals.photoCost > 0 && (
+            <Row label="Photography" value={`₹${totals.photoCost.toLocaleString('en-IN')}`} />
+          )}
+          <Row
+            label="Monthly support"
+            value={`₹${totals.monthly.toLocaleString('en-IN')}/mo`}
+            accent
+          />
+        </div>
+
+        <Button variant="primary" href="/contact" size="md" className="w-full justify-center">
+          Get This Quote
+        </Button>
+        <a
+          href={COMPANY.socials.whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 w-full inline-flex items-center justify-center gap-2 px-4 py-3 border border-subtle/40 hover:border-accent/40 text-warm-ivory bg-transparent font-heading font-semibold text-sm rounded-lg transition-colors duration-300"
         >
-          {PROCESS.map((step) => {
-            const Icon = step.icon
-            return (
-              <motion.div
-                key={step.step}
-                variants={staggerItem}
-                className="relative p-6 border border-subtle/20 rounded-xl bg-dark-card/40"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <span className="font-heading text-3xl font-bold text-accent/30">
-                    {step.step}
-                  </span>
-                  <div className="w-10 h-10 rounded-full border border-accent/30 flex items-center justify-center bg-secondary/40">
-                    <Icon className="w-4 h-4 text-accent" strokeWidth={1.6} />
-                  </div>
-                </div>
-                <h4 className="font-heading text-lg font-bold text-warm-ivory mb-2">
-                  {step.title}
-                </h4>
-                <p className="font-body text-warm-ivory/70 text-sm leading-relaxed">
-                  {step.body}
-                </p>
-              </motion.div>
-            )
-          })}
-        </motion.div>
+          <MessageCircle size={14} strokeWidth={2} />
+          WhatsApp Us
+        </a>
+
+        <p className="mt-4 font-body text-[11px] text-muted/80 leading-relaxed">
+          Estimate only. We&apos;ll confirm scope and timeline on a call.
+        </p>
       </div>
-    </section>
+    </div>
+  )
+}
+
+function Row({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="flex items-center justify-between">
+      <span className="font-body text-warm-ivory/65">{label}</span>
+      <span className={`font-ui font-semibold ${accent ? 'text-accent' : 'text-warm-ivory'}`}>
+        {value}
+      </span>
+    </div>
   )
 }
 
 function FAQSection() {
   return (
-    <section className="py-24 px-6 bg-dark-card/40">
+    <section className="py-20 px-6 bg-dark-card/40">
       <div className="max-w-3xl mx-auto">
-        <SectionHeading
-          title="Questions schools ask us"
-          subtitle="If yours isn’t here, WhatsApp us. We’ll answer the same day."
-        />
-        <div className="mt-16 space-y-3">
+        <h2 className="font-heading text-3xl md:text-4xl font-bold text-warm-ivory text-center mb-2">
+          Quick questions
+        </h2>
+        <p className="font-body text-muted text-center mb-12">
+          Anything else? <a href={COMPANY.socials.whatsapp} target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80">WhatsApp us</a>.
+        </p>
+        <div className="space-y-3">
           {FAQ.map((item, i) => (
             <FAQItem key={i} question={item.q} answer={item.a} />
           ))}
@@ -573,19 +481,13 @@ function FAQSection() {
 function FAQItem({ question, answer }: { question: string; answer: string }) {
   const [open, setOpen] = useState(false)
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="border border-subtle/20 rounded-xl bg-dark-card/60 overflow-hidden"
-    >
+    <div className="border border-subtle/20 rounded-xl bg-dark-card/60 overflow-hidden">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full px-6 py-5 flex items-center justify-between gap-4 text-left hover:bg-dark-card/80 transition-colors duration-200"
+        className="w-full px-5 py-4 flex items-center justify-between gap-4 text-left hover:bg-dark-card/80 transition-colors"
         aria-expanded={open}
       >
-        <span className="font-heading text-base md:text-lg font-semibold text-warm-ivory">
+        <span className="font-heading text-base font-semibold text-warm-ivory">
           {question}
         </span>
         <motion.span
@@ -593,7 +495,7 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
           transition={{ duration: 0.2 }}
           className="flex-shrink-0 text-accent"
         >
-          <ChevronDown size={20} strokeWidth={2} />
+          <ChevronDown size={18} strokeWidth={2} />
         </motion.span>
       </button>
       <AnimatePresence initial={false}>
@@ -605,61 +507,38 @@ function FAQItem({ question, answer }: { question: string; answer: string }) {
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className="overflow-hidden"
           >
-            <p className="px-6 pb-6 font-body text-warm-ivory/75 leading-relaxed">
+            <p className="px-5 pb-5 font-body text-warm-ivory/75 text-sm leading-relaxed">
               {answer}
             </p>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   )
 }
 
 function FinalCTA() {
   return (
-    <section className="py-24 px-6 text-center">
-      <div className="max-w-3xl mx-auto">
-        <motion.h2
-          className="font-heading font-bold text-3xl md:text-4xl lg:text-5xl text-warm-ivory mb-6"
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
+    <section className="py-20 px-6 text-center">
+      <h2 className="font-heading font-bold text-3xl md:text-4xl text-warm-ivory mb-4">
+        Like the quote? <span className="text-accent">Let&apos;s build it.</span>
+      </h2>
+      <p className="font-body text-muted mb-8 max-w-md mx-auto">
+        30-min call to confirm scope, timeline, and answer your questions.
+      </p>
+      <div className="flex flex-wrap items-center justify-center gap-4">
+        <Button variant="primary" href="/contact" size="lg">
+          Book a Free Call
+        </Button>
+        <a
+          href={COMPANY.socials.whatsapp}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-8 py-4 text-lg border border-accent text-warm-ivory bg-transparent hover:bg-accent/10 font-heading font-semibold rounded-lg transition-colors duration-300"
         >
-          Ready to build a website your <span className="text-accent">parents will share?</span>
-        </motion.h2>
-        <motion.p
-          className="font-body text-muted text-lg mb-10 max-w-xl mx-auto"
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          transition={{ delay: 0.1 }}
-        >
-          We&apos;ll do a free 30-minute call — review your current site (or your
-          competitor&apos;s), suggest a tier, and give you a clear timeline.
-        </motion.p>
-        <motion.div
-          className="flex flex-wrap items-center justify-center gap-4"
-          variants={fadeInUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-        >
-          <Button variant="primary" href="/contact" size="lg">
-            Book a Free Call
-          </Button>
-          <a
-            href={COMPANY.socials.whatsapp}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-8 py-4 text-lg border border-accent text-warm-ivory bg-transparent hover:bg-accent/10 font-heading font-semibold rounded-lg transition-colors duration-300"
-          >
-            <MessageCircle size={18} strokeWidth={2} />
-            WhatsApp Us
-          </a>
-        </motion.div>
+          <MessageCircle size={18} strokeWidth={2} />
+          WhatsApp Us
+        </a>
       </div>
     </section>
   )
