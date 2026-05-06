@@ -209,37 +209,37 @@ export const BLOG_POSTS = [
 
 export const TEAM = [
   {
-    name: 'Sai Teja Chunchu',
+    name: 'Sai Teja',
     role: 'Chief Executive Officer',
     tagline: 'Sets the direction, holds the line',
     image: null,
   },
   {
-    name: 'Mahendher Padma',
+    name: 'Mahendher',
     role: 'Chief Technical Officer',
     tagline: 'Builds systems that scale',
     image: null,
   },
   {
-    name: 'Rohith Aerva',
+    name: 'Rohith',
     role: 'Marketing Head & DevOps Lead',
     tagline: 'Keeps the infrastructure alive',
     image: null,
   },
   {
-    name: 'Uday Sunkari',
+    name: 'Uday',
     role: 'Head of Engineering',
     tagline: 'Ships the roadmap on time',
     image: null,
   },
   {
-    name: 'Hari Krishna Vemula',
+    name: 'Hari Krishna',
     role: 'Business & Research',
     tagline: 'Finds the problems worth solving',
     image: null,
   },
   {
-    name: 'Sai Charan Vilasagaram',
+    name: 'Sai Charan',
     role: 'Chief Financial Officer',
     tagline: 'Makes the numbers talk',
     image: null,
@@ -251,19 +251,19 @@ export const TEAM = [
     image: null,
   },
   {
-    name: 'Vishal Gajula',
+    name: 'Vishal',
     role: 'Product & Innovation',
     tagline: 'Ships what users actually need',
     image: null,
   },
   {
-    name: 'Manjunath Dudam',
+    name: 'Manjunath',
     role: 'Chief Strategy Officer',
     tagline: 'Connects strategy to action',
     image: null,
   },
   {
-    name: 'Naresh Edagotti',
+    name: 'Naresh',
     role: 'Artificial Intelligence & Machine Learning',
     tagline: 'Teaches machines to think',
     image: null,
