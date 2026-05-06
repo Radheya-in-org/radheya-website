@@ -3,7 +3,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
-import { Linkedin } from 'lucide-react'
 import { TEAM } from '@/lib/constants'
 import SectionHeading from '@/components/ui/SectionHeading'
 
@@ -72,18 +71,6 @@ function TeamCard({
       <p className="font-body text-xs text-muted mt-2 leading-relaxed italic">
         {member.tagline}
       </p>
-
-      {/* LinkedIn */}
-      <a
-        href={member.linkedin}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="mt-3 p-1.5 rounded-full text-muted/50 hover:text-accent hover:bg-accent/10
-                   transition-all duration-200"
-        aria-label={`${member.name} on LinkedIn`}
-      >
-        <Linkedin size={15} />
-      </a>
     </motion.div>
   )
 }
