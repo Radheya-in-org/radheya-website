@@ -13,6 +13,8 @@
 
 Our flagship product is **MyNextStep** ([mynextstep.in](https://mynextstep.in)) — an AI career-guidance platform helping Indian students choose the right path after 10th and 12th. Everything we know about students, parents, and the schools that serve them informs the work we do for educational institutions.
 
+You can review our complete approach to school websites at [radheya.in/solutions/education/schools](https://radheya.in/solutions/education/schools).
+
 We are a **local team**. Our roots are in Karimnagar and Nizamabad. We can visit your campus. We support our schools in **Telugu, Hindi, and English** — not from a ticket portal in another city.
 
 ---

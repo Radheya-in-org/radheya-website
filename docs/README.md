@@ -18,7 +18,8 @@ Folder structure mirrors the public URL structure where possible:
 docs/
 ├── README.md                                                ← you are here
 ├── proposals/
-│   └── akshara-school.md                                    ← active: Akshara
+│   ├── akshara-school.md                                    ← active: Akshara (markdown source)
+│   └── akshara-school.docx                                  ← active: Akshara (Word — share this)
 └── solutions/
     └── education/
         └── schools/
@@ -37,6 +38,20 @@ docs/
 ## Session log
 
 Most recent first. Each entry: what we discussed, what we decided, what shipped, what's open.
+
+### 2026-05-07 — Akshara proposal: Word .docx + schools URL
+- **Discussed:** the principal needed an actual `.docx` file, not markdown — for direct WhatsApp delivery. Also needed the public schools page URL referenced in the proposal so the principal can review it before the discovery call.
+- **Decided:**
+  - Generate Word documents directly with `docx-js` (Node) instead of markdown→PDF conversion. Cleaner, brand-styled, table-rich, hyperlinked. Script lives at `/tmp/create-akshara-proposal.js` (not committed; one-shot).
+  - Add `radheya.in/solutions/education/schools` link in the "Who we are" section so principals can verify approach.
+  - Store both `.md` (source-of-truth) and `.docx` (deliverable) in `docs/proposals/{school-name}.{md,docx}`.
+- **Shipped:**
+  - `docs/proposals/akshara-school.docx` — A4, gold-accent headings, branded tables, clickable hyperlinks, headers/footers with page numbers
+  - Updated `docs/proposals/akshara-school.md` with the schools URL
+  - README index now shows both files
+- **Open follow-ups:**
+  - Generalize the docx-js script into `scripts/build-proposal.js` that takes a JSON config (school name, date, rep, phone) and emits a .docx — useful when sending to 5+ schools/month
+  - Lock a permanent place for the script in the repo (currently /tmp)
 
 ### 2026-05-07 — First proposal sent: Akshara
 - **Discussed:** filling the proposal template for an actual school (Akshara) to share via WhatsApp. Decided no amounts in the document — quote happens after a discovery call where we understand actual requirements. Adopted requirements-first language as the standard approach.
