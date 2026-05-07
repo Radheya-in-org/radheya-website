@@ -20,18 +20,30 @@ docs/
 └── solutions/
     └── education/
         └── schools/
-            └── rural-website-importance.md                  ← honest pitch for rural schools
+            ├── rural-website-importance.md                  ← honest pitch for rural schools
+            └── proposal-template.md                         ← reusable principal-facing proposal
 ```
 
 | Path | Purpose |
 |---|---|
 | `solutions/education/schools/rural-website-importance.md` | The 8 honest reasons a rural school benefits from a website. Use this when pitching to rural school correspondents/principals. |
+| `solutions/education/schools/proposal-template.md` | Polished sales proposal template to share with school principals before closing. Copy, replace placeholders (school name, date, pricing), export to PDF, share. |
 
 ---
 
 ## Session log
 
 Most recent first. Each entry: what we discussed, what we decided, what shipped, what's open.
+
+### 2026-05-07 — Principal-facing proposal template
+- **Discussed:** need a polished, professional document to share with a school principal before the closing conversation. Should impress, position Radheya as the obvious local choice, and lay out scope + pricing + maintenance clearly.
+- **Decided:** template approach (placeholders for school name, date, amounts) so the team reuses it for every school instead of writing from scratch. Keep it short — 3 pages. Include real numbers. Lead with Radheya's local advantage.
+- **Shipped:** `docs/solutions/education/schools/proposal-template.md`
+- **Open follow-ups:**
+  - Convert template to a Word/Google Docs version for non-technical team members
+  - Build a script that fills placeholders + exports a branded PDF (later, when volume justifies it)
+  - Lock the actual default pricing numbers (currently placeholders) — next session
+  - Decide if proposals get version-numbered + stored per-school in `docs/proposals/{school-name}.md`
 
 ### 2026-05-07 — Rural school website pitch
 - **Discussed:** how to honestly convince a rural school to want a website, given their parents are on YouTube/Insta/WhatsApp but don't browse websites. The standard tier-2 "more admissions" pitch fails for rural and damages trust when promises don't land.
