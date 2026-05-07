@@ -39,6 +39,19 @@ docs/
 
 Most recent first. Each entry: what we discussed, what we decided, what shipped, what's open.
 
+### 2026-05-07 — Akshara proposal: redesigned palette
+- **Discussed:** the v1 colors (bright gold-on-white) felt cheap/flashy for a serious proposal going to a school principal. Needed a more refined, executive look.
+- **Decided:**
+  - New palette: **deep navy `#0A2540` + antique gold `#B8860B`** on warm white. Charcoal `#1F2937` for body, slate `#6B7280` for muted meta lines, very pale cool gray `#F7F8FA` for alternating table rows. Reads premium, prints well, photographs well on a phone.
+  - Dedicated **cover page**: small uppercase RADHEYA eyebrow → big bold "Website Proposal" → "Prepared for" → "Akshara" in gold → diamond divider (— ◆ —) → tagline → date/validity at the bottom.
+  - **Editorial section style**: each section gets a small uppercase gold eyebrow label with a thin gold rule, then the heading in deep navy. Cleaner hierarchy than gold-on-everything.
+  - Table headers now navy with white text (not gold-on-white). Less shouty, more serious.
+  - Header strip on every page after cover; cover page itself has no header/footer (`titlePage: true`).
+- **Shipped:**
+  - Replaced `docs/proposals/akshara-school.docx` with the redesigned version
+  - `.gitignore` now ignores Office lock files (`~$*`)
+- **Open follow-ups:** same as previous entry — generalize the docx-js script into `scripts/build-proposal.js` for multi-school use.
+
 ### 2026-05-07 — Akshara proposal: Word .docx + schools URL
 - **Discussed:** the principal needed an actual `.docx` file, not markdown — for direct WhatsApp delivery. Also needed the public schools page URL referenced in the proposal so the principal can review it before the discovery call.
 - **Decided:**
