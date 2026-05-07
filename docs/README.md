@@ -17,6 +17,8 @@ Folder structure mirrors the public URL structure where possible:
 ```
 docs/
 ├── README.md                                                ← you are here
+├── proposals/
+│   └── akshara-school.md                                    ← active: Akshara
 └── solutions/
     └── education/
         └── schools/
@@ -28,12 +30,28 @@ docs/
 |---|---|
 | `solutions/education/schools/rural-website-importance.md` | The 8 honest reasons a rural school benefits from a website. Use this when pitching to rural school correspondents/principals. |
 | `solutions/education/schools/proposal-template.md` | Polished sales proposal template to share with school principals before closing. Copy, replace placeholders (school name, date, pricing), export to PDF, share. |
+| `proposals/{school-name}.md` | Filled proposal sent to a specific school. Treat each as a record of what was promised. |
 
 ---
 
 ## Session log
 
 Most recent first. Each entry: what we discussed, what we decided, what shipped, what's open.
+
+### 2026-05-07 — First proposal sent: Akshara
+- **Discussed:** filling the proposal template for an actual school (Akshara) to share via WhatsApp. Decided no amounts in the document — quote happens after a discovery call where we understand actual requirements. Adopted requirements-first language as the standard approach.
+- **Decided:**
+  - All proposals lead with "We start by listening" — discovery call before quoting
+  - Don't expose pricing in shareable proposal documents — pricing happens 1:1 on the call
+  - Default rep name is "Arun" until we standardize per-team-member templates
+  - Default phone is +91 96764 30322
+  - Default valid-until is 30 days from proposal date
+  - Sent proposals get versioned per-school in `docs/proposals/{school-name}.md`
+- **Shipped:** `docs/proposals/akshara-school.md`
+- **Open follow-ups:**
+  - Update `proposal-template.md` to match the requirements-first / no-amounts pattern (currently still has placeholder amount fields)
+  - Consider a Pandoc / Word export workflow for sending PDFs
+  - After discovery call with Akshara, log the quoted pricing in the proposal file or a separate quote file
 
 ### 2026-05-07 — Principal-facing proposal template
 - **Discussed:** need a polished, professional document to share with a school principal before the closing conversation. Should impress, position Radheya as the obvious local choice, and lay out scope + pricing + maintenance clearly.
